@@ -1,0 +1,165 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        Int      @id @default(autoincrement())
+  email     String   @unique
+  password  String
+  firstName String?
+  lastName  String?
+  phone     String?
+  address   String?
+  city      String?
+  country   String?
+  image     String?
+  role      Role     @default(CUSTOMER)
+  cart      Cart?
+  favorites Favorite[]
+  orders    Order[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("users")
+}
+
+
+enum Role {
+  CUSTOMER
+  ADMIN_KIDS
+  ADMIN_NEXT
+  SYSTEM_ADMIN
+  SELLER
+}
+
+enum Audience {
+  KIDS
+  NEXT
+}
+
+model Category {
+  id        Int       @id @default(autoincrement())
+  name      String
+  slug      String
+  image     String?
+  audience  Audience
+  isActive  Boolean   @default(true)
+  products  Product[]
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  @@unique([name, audience])
+  @@unique([slug, audience])
+  @@map("categories")
+}
+
+model Product {
+  id             Int         @id @default(autoincrement())
+  name           String
+  description    String?     @db.Text
+  price          Decimal     @db.Decimal(10, 2)
+  sku            String      @unique
+  brand          String?
+  audience       Audience
+  thumbnails     Json?     // Array of URLs
+  colors         Json?     // Array of Strings
+  sizes          Json?     // Array of Strings
+  additionalInfo String?     @db.Text
+  isActive       Boolean     @default(true)
+  categoryId     Int
+  category       Category    @relation(fields: [categoryId], references: [id])
+  brandId        Int?
+  brandRel       Brand?      @relation(fields: [brandId], references: [id])
+  orderItems     OrderItem[]
+  cartItems      CartItem[]
+  favorites      Favorite[]
+  createdAt      DateTime    @default(now())
+  updatedAt      DateTime    @updatedAt
+
+  @@map("products")
+}
+
+model Cart {
+  id        Int        @id @default(autoincrement())
+  userId    Int        @unique
+  user      User       @relation(fields: [userId], references: [id])
+  items     CartItem[]
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+
+  @@map("carts")
+}
+
+model CartItem {
+  id            Int      @id @default(autoincrement())
+  cartId        Int
+  cart          Cart     @relation(fields: [cartId], references: [id])
+  productId     Int
+  product       Product  @relation(fields: [productId], references: [id])
+  quantity      Int
+  selectedSize  String?
+  selectedColor String?
+
+  @@map("cart_items")
+}
+
+model Favorite {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  user      User     @relation(fields: [userId], references: [id])
+  productId Int
+  product   Product  @relation(fields: [productId], references: [id])
+  createdAt DateTime @default(now())
+
+  @@unique([userId, productId])
+  @@map("favorites")
+}
+
+model Order {
+  id          Int      @id @default(autoincrement())
+  userId      Int
+  user        User     @relation(fields: [userId], references: [id])
+  totalAmount Decimal  @db.Decimal(10, 2)
+  status      String   @default("PENDING") // PENDING, COMPLETED, CANCELLED
+  items       OrderItem[]
+  shippingAddress String?
+  phone           String?
+  paymentMethod   String    @default("COD") // COD, CARD, MOCK
+  paymentStatus   String    @default("PENDING") // PENDING, PAID, FAILED
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  @@map("orders")
+}
+
+model OrderItem {
+  id        Int      @id @default(autoincrement())
+  orderId   Int
+  order     Order    @relation(fields: [orderId], references: [id])
+  productId Int
+  product   Product  @relation(fields: [productId], references: [id])
+  quantity  Int
+  price     Decimal  @db.Decimal(10, 2)
+  audience  Audience // Snapshot for easier filtering
+  status    String   @default("PENDING") // PENDING, SHIPPED, DELIVERED, RETURNED
+
+  @@map("order_items")
+}
+
+model Brand {
+  id        Int       @id @default(autoincrement())
+  name      String    @unique
+  slug      String    @unique
+  image     String?
+  isActive  Boolean   @default(true)
+  products  Product[]
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  @@map("brands")
+}

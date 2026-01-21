@@ -1,0 +1,32 @@
+const express = require('express');
+const router = express.Router();
+const authRoutes = require('./modules/auth/auth.routes');
+const dashboardRoutes = require('./modules/dashboard/dashboard.routes');
+const categoriesRoutes = require('./modules/categories/categories.routes');
+const productsRoutes = require('./modules/products/products.routes');
+const ordersRoutes = require('./modules/orders/orders.routes');
+
+// Mount routes
+router.use('/auth', authRoutes);
+router.use('/dashboard', dashboardRoutes);
+router.use('/categories', categoriesRoutes);
+router.use('/products', productsRoutes);
+router.use('/orders', ordersRoutes);
+router.use('/users', require('./modules/users/users.routes'));
+router.use('/cart', require('./modules/cart/cart.routes'));
+router.use('/favorites', require('./modules/favorites/favorites.routes'));
+router.use('/brands', require('./modules/brands/brands.routes'));
+router.use('/upload', require('./modules/upload/upload.routes'));
+router.use('/checkout', require('./modules/checkout/checkout.routes'));
+router.use('/payment', require('./modules/payment/payment.routes'));
+
+// Health check
+router.get('/health', (req, res) => {
+    res.json({
+        status: 'ok',
+        timestamp: new Date().toISOString(),
+        environment: process.env.NODE_ENV
+    });
+});
+
+module.exports = router;
