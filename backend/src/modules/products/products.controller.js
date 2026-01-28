@@ -42,6 +42,11 @@ exports.findAll = async (req, res) => {
             filter.audience = req.query.audience; // Public
         }
 
+        // Filter by bestSeller if requested
+        if (req.query.bestSeller === 'true') {
+            filter.isBestSeller = true;
+        }
+
         const products = await productService.findAll(filter);
         res.json({ success: true, data: products });
     } catch (error) {

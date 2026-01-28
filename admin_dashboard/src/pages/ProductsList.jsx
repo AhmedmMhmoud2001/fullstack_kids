@@ -57,16 +57,16 @@ const ProductsList = ({ audience, title }) => {
     if (error) return <div className="p-4 text-center text-red-600">Error: {error}</div>;
 
     return (
-        <div className="space-y-6">
+        <div className="space-y-6 overflow-x-hidden">
             {/* Header */}
-            <div className="flex items-center justify-between">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                 <div>
-                    <h1 className="text-3xl font-bold text-gray-900">{title}</h1>
-                    <p className="text-gray-600 mt-1">Manage products for {audience} audience</p>
+                    <h1 className="text-2xl md:text-3xl font-bold text-gray-900 leading-tight">{title}</h1>
+                    <p className="text-sm md:text-base text-gray-600 mt-1 uppercase tracking-tight">Manage products for {audience} audience</p>
                 </div>
                 <button
                     onClick={() => navigate(`/${audience.toLowerCase()}/products/new`)}
-                    className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                    className="w-full sm:w-auto flex items-center justify-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors shadow-md font-medium whitespace-nowrap"
                 >
                     <Plus size={20} />
                     Add Product
@@ -88,7 +88,7 @@ const ProductsList = ({ audience, title }) => {
             </div>
 
             {/* Products Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6">
                 {filteredProducts.map((product) => (
                     <div key={product.id} className="bg-white rounded-lg shadow-sm overflow-hidden hover:shadow-md transition-shadow">
                         {/* Product Image */}
@@ -104,18 +104,28 @@ const ProductsList = ({ audience, title }) => {
                                     <span className="text-sm">No Image</span>
                                 </div>
                             )}
-                            <span className={`absolute top-2 right-2 px-2 py-1 text-xs font-semibold rounded-full ${product.isActive
-                                ? 'bg-green-100 text-green-800'
-                                : 'bg-red-100 text-red-800'
-                                }`}>
-                                {product.isActive ? 'Active' : 'Inactive'}
-                            </span>
+                            <div className="absolute top-2 right-2 flex flex-col gap-1">
+                                <span className={`px-2 py-1 text-xs font-semibold rounded-full ${product.isActive
+                                    ? 'bg-green-100 text-green-800'
+                                    : 'bg-red-100 text-red-800'
+                                    }`}>
+                                    {product.isActive ? 'Active' : 'Inactive'}
+                                </span>
+                                {product.isBestSeller && (
+                                    <span className="px-2 py-1 text-xs font-semibold rounded-full bg-yellow-100 text-yellow-800">
+                                        ⭐ Best Seller
+                                    </span>
+                                )}
+                            </div>
                         </div>
 
                         {/* Product Info */}
                         <div className="p-4">
                             <h3 className="font-semibold text-gray-900 mb-1 truncate">{product.name}</h3>
-                            <p className="text-sm text-gray-500 mb-2">SKU: {product.sku}</p>
+                            <p className="text-sm text-gray-500 mb-1">SKU: {product.sku}</p>
+                            <p className="text-xs text-gray-500 mb-2">
+                                Stock: <span className="font-semibold text-gray-800">{product.stock ?? 0}</span>
+                            </p>
                             <p className="text-lg font-bold text-blue-600 mb-2">${parseFloat(product.price).toFixed(2)}</p>
 
                             {/* Likes Count */}
@@ -165,7 +175,7 @@ const ProductsList = ({ audience, title }) => {
             )}
 
             {/* Stats */}
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
                 <div className="bg-white rounded-lg shadow-sm p-6">
                     <div className="text-sm text-gray-600">Total Products</div>
                     <div className="text-2xl font-bold text-gray-900 mt-1">{products.length}</div>
@@ -192,8 +202,8 @@ const ProductsList = ({ audience, title }) => {
 
             {/* Product Detail Modal */}
             {selectedProduct && (
-                <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-                    <div className="bg-white rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+                <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center z-[2000] p-4 animate-fade-in">
+                    <div className="bg-white rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto animate-slide-in-bottom">
                         <div className="sticky top-0 bg-white border-b p-4 flex items-center justify-between">
                             <h2 className="text-xl font-bold">{selectedProduct.name}</h2>
                             <button

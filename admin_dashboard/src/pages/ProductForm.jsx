@@ -22,7 +22,9 @@ const ProductForm = ({ audience }) => {
         sizes: [],
         additionalInfo: '',
         isActive: true,
-        categoryId: ''
+        isBestSeller: false,
+        categoryId: '',
+        stock: ''
     });
 
     const [categories, setCategories] = useState([]);
@@ -69,7 +71,9 @@ const ProductForm = ({ audience }) => {
                     sizes: product.sizes ? JSON.parse(product.sizes) : [],
                     additionalInfo: product.additionalInfo || '',
                     isActive: product.isActive,
-                    categoryId: product.categoryId || ''
+                    isBestSeller: product.isBestSeller ?? false,
+                    categoryId: product.categoryId || '',
+                    stock: product.stock ?? 0
                 });
             } else {
                 setError('Failed to load product details');
@@ -158,6 +162,7 @@ const ProductForm = ({ audience }) => {
             const submitData = {
                 ...formData,
                 price: parseFloat(formData.price),
+                stock: formData.stock === '' ? 0 : parseInt(formData.stock, 10),
                 categoryId: parseInt(formData.categoryId),
                 thumbnails: JSON.stringify(formData.thumbnails),
                 colors: JSON.stringify(formData.colors),
@@ -254,6 +259,21 @@ const ProductForm = ({ audience }) => {
                                 min="0"
                                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
                                 placeholder="0.00"
+                            />
+                        </div>
+
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-1">
+                                Stock (Available Quantity)
+                            </label>
+                            <input
+                                type="number"
+                                name="stock"
+                                value={formData.stock}
+                                onChange={handleChange}
+                                min="0"
+                                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+                                placeholder="e.g. 50"
                             />
                         </div>
 
@@ -431,19 +451,35 @@ const ProductForm = ({ audience }) => {
                     />
                 </div>
 
-                {/* Is Active */}
-                <div className="flex items-center gap-2">
-                    <input
-                        type="checkbox"
-                        id="isActive"
-                        name="isActive"
-                        checked={formData.isActive}
-                        onChange={handleChange}
-                        className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
-                    />
-                    <label htmlFor="isActive" className="text-sm font-medium text-gray-700 select-none">
-                        Product is Active
-                    </label>
+                {/* Product Status Checkboxes */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="flex items-center gap-2">
+                        <input
+                            type="checkbox"
+                            id="isActive"
+                            name="isActive"
+                            checked={formData.isActive}
+                            onChange={handleChange}
+                            className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                        />
+                        <label htmlFor="isActive" className="text-sm font-medium text-gray-700 select-none">
+                            Product is Active
+                        </label>
+                    </div>
+                    
+                    <div className="flex items-center gap-2">
+                        <input
+                            type="checkbox"
+                            id="isBestSeller"
+                            name="isBestSeller"
+                            checked={formData.isBestSeller}
+                            onChange={handleChange}
+                            className="w-4 h-4 text-green-600 border-gray-300 rounded focus:ring-green-500"
+                        />
+                        <label htmlFor="isBestSeller" className="text-sm font-medium text-gray-700 select-none">
+                            Mark as Best Seller ⭐
+                        </label>
+                    </div>
                 </div>
 
                 {/* Actions */}

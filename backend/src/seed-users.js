@@ -38,13 +38,13 @@ async function seedUsers() {
             where: { email: user.email },
             update: {
                 password: hashedPassword,
-                name: user.name,
+                firstName: user.name,
                 role: user.role
             },
             create: {
                 email: user.email,
                 password: hashedPassword,
-                name: user.name,
+                firstName: user.name,
                 role: user.role
             }
         });

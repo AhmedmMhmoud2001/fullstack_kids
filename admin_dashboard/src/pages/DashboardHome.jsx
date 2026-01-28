@@ -87,19 +87,19 @@ const DashboardHome = () => {
     }, []);
 
     return (
-        <div className="-m-6">
+        <div className="-m-4 md:-m-6 overflow-x-hidden">
             {/* Header / Dark Background Section */}
-            <div className=" pt-10 pb-32 px-6">
+            <div className="pt-6 md:pt-10 pb-24 md:pb-32 px-4 md:px-6 bg-slate-50 border-b border-gray-100">
                 <div className="max-w-7xl mx-auto">
-                    <div className="flex justify-between items-center mb-10">
+                    <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8 md:mb-10">
                         <div>
-                            <h1 className="text-3xl font-black uppercase tracking-tighter">Performance Overview</h1>
-                            <p className="text-slate-400 mt-1">Real-time statistics for your store</p>
+                            <h1 className="text-2xl md:text-3xl font-black uppercase tracking-tighter text-slate-900 leading-tight">Performance Overview</h1>
+                            <p className="text-slate-500 mt-1 text-sm md:text-base">Real-time statistics for your store</p>
                         </div>
                     </div>
 
                     {/* Stat Cards Grid - Overlapping bottom */}
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
                         <StatCard
                             title="Traffic"
                             value="350,897"
@@ -135,21 +135,21 @@ const DashboardHome = () => {
             </div>
 
             {/* Main Content - Charts Section */}
-            <div className="max-w-7xl mx-auto px-6 -mt-16 space-y-8">
-                <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <div className="max-w-7xl mx-auto px-4 md:px-6 -mt-12 md:-mt-16 space-y-6 md:space-y-8 pb-12">
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 md:gap-8">
                     {/* Main Sales Chart */}
-                    <div className="lg:col-span-2 bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
-                        <div className="flex justify-between items-center mb-8">
+                    <div className="lg:col-span-2 bg-white rounded-2xl shadow-sm border border-gray-100 p-4 md:p-6 overflow-hidden">
+                        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6 md:mb-8">
                             <div>
-                                <h3 className="text-xs font-black text-gray-400 uppercase tracking-widest">Overview</h3>
-                                <h2 className="text-xl font-bold text-gray-800">Sales Value</h2>
+                                <h3 className="text-[10px] md:text-xs font-black text-gray-400 uppercase tracking-widest">Overview</h3>
+                                <h2 className="text-lg md:text-xl font-bold text-gray-800">Sales Value</h2>
                             </div>
-                            <div className="flex bg-slate-50 p-1 rounded-xl">
+                            <div className="flex bg-slate-50 p-1 rounded-xl w-full sm:w-auto overflow-x-auto">
                                 {['Month', 'Week'].map((t) => (
                                     <button
                                         key={t}
                                         onClick={() => setTimeframe(t)}
-                                        className={`px-4 py-1.5 rounded-lg text-sm font-bold transition-all ${timeframe === t ? 'bg-indigo-600 text-white shadow-md' : 'text-slate-500 hover:text-indigo-600'
+                                        className={`flex-1 sm:flex-none px-4 py-1.5 rounded-lg text-sm font-bold transition-all whitespace-nowrap ${timeframe === t ? 'bg-indigo-600 text-white shadow-md' : 'text-slate-500 hover:text-indigo-600'
                                             }`}
                                     >
                                         {t}
@@ -157,7 +157,7 @@ const DashboardHome = () => {
                                 ))}
                             </div>
                         </div>
-                        <div className="h-[350px] w-full">
+                        <div className="h-[250px] md:h-[350px] w-full">
                             <ResponsiveContainer width="100%" height="100%">
                                 <AreaChart data={salesData}>
                                     <defs>
@@ -209,21 +209,21 @@ const DashboardHome = () => {
 
                 {/* Recent Activity Section */}
                 <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden mb-12">
-                    <div className="p-6 border-b border-gray-100 flex items-center justify-between">
+                    <div className="p-4 md:p-6 border-b border-gray-100 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                         <div>
-                            <h2 className="text-xl font-bold text-gray-900">Recent Transactions</h2>
-                            <p className="text-sm text-gray-500">A detailed list of the latest orders</p>
+                            <h2 className="text-lg md:text-xl font-bold text-gray-900">Recent Transactions</h2>
+                            <p className="text-sm text-gray-500 text-balance">A detailed list of the latest orders</p>
                         </div>
                         <button
                             onClick={() => navigate('/kids/orders')}
-                            className="px-6 py-2 bg-slate-900 text-white rounded-xl text-sm font-bold hover:bg-slate-800 transition-all shadow-lg active:scale-95"
+                            className="w-full sm:w-auto px-6 py-2 bg-slate-900 text-white rounded-xl text-sm font-bold hover:bg-slate-800 transition-all shadow-lg active:scale-95 whitespace-nowrap"
                         >
                             View All Orders
                         </button>
                     </div>
-                    <div className="overflow-x-auto">
-                        <table className="w-full text-left">
-                            <thead className="bg-gray-50">
+                    <div className="overflow-x-auto modern-scrollbar">
+                        <table className="w-full text-left min-w-[600px]">
+                            <thead className="bg-gray-50 border-b border-gray-100">
                                 <tr>
                                     <th className="px-6 py-4 text-xs font-black text-gray-400 uppercase tracking-widest">Id</th>
                                     <th className="px-6 py-4 text-xs font-black text-gray-400 uppercase tracking-widest">Customer</th>

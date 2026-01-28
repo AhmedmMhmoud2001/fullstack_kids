@@ -90,7 +90,7 @@ function generateProductImages(productName, count = 6) {
     const images = [];
     for (let i = 0; i < count; i++) {
         const color = imageColors[i % imageColors.length];
-        const imageUrl = `https://via.placeholder.com/600x600/${color}/FFFFFF?text=${encodeURIComponent(productName)}+${i + 1}`;
+        const imageUrl = `https://placehold.co/600x600/${color}/FFFFFF?text=${encodeURIComponent(productName)}+${i + 1}`;
         images.push(imageUrl);
     }
     return images;
@@ -130,6 +130,7 @@ async function seedProducts() {
                         brand: category.audience === 'KIDS' ? 'Kids & Co' : 'Next Gen',
                         audience: category.audience,
                         categoryId: category.id,
+                        stock: Math.floor(Math.random() * 100) + 20, // Random stock between 20-120
                         colors: JSON.stringify(colors.slice(0, 4)),
                         sizes: JSON.stringify(sizes.slice(0, 3)),
                         thumbnails: JSON.stringify(images),

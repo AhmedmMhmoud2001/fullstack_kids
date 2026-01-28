@@ -12,7 +12,12 @@ import Categories from './pages/Categories';
 import CategoryForm from './pages/CategoryForm';
 import ProductForm from './pages/ProductForm';
 import Profile from './pages/Profile';
+import Notifications from './pages/Notifications';
 import Login from './pages/Login';
+import ContactMessages from './pages/Contact';
+import Brands from './pages/Brands';
+import StaticPages from './pages/StaticPages';
+import Coupons from './pages/Coupons';
 
 // Role Constants
 const ROLES = {
@@ -171,7 +176,48 @@ const DashboardRoutes = () => {
                         </ProtectedRoute>
                     }
                 />
+                <Route
+                    path="notifications"
+                    element={
+                        <ProtectedRoute allowedRoles={[ROLES.SYSTEM_ADMIN, ROLES.ADMIN_KIDS, ROLES.ADMIN_NEXT]}>
+                            <Notifications />
+                        </ProtectedRoute>
+                    }
+                />
+                <Route
+                    path="contact"
+                    element={
+                        <ProtectedRoute allowedRoles={[ROLES.SYSTEM_ADMIN, ROLES.ADMIN_KIDS, ROLES.ADMIN_NEXT]}>
+                            <ContactMessages />
+                        </ProtectedRoute>
+                    }
+                />
+                <Route
+                    path="brands"
+                    element={
+                        <ProtectedRoute allowedRoles={[ROLES.SYSTEM_ADMIN, ROLES.ADMIN_KIDS, ROLES.ADMIN_NEXT]}>
+                            <Brands />
+                        </ProtectedRoute>
+                    }
+                />
+                <Route
+                    path="static-pages"
+                    element={
+                        <ProtectedRoute allowedRoles={[ROLES.SYSTEM_ADMIN]}>
+                            <StaticPages />
+                        </ProtectedRoute>
+                    }
+                />
+                <Route
+                    path="coupons"
+                    element={
+                        <ProtectedRoute allowedRoles={[ROLES.SYSTEM_ADMIN]}>
+                            <Coupons />
+                        </ProtectedRoute>
+                    }
+                />
             </Route>
+
 
             {/* Catch all redirect to home */}
             <Route path="*" element={<Navigate to="/" replace />} />

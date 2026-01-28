@@ -8,8 +8,8 @@ datasource db {
 }
 
 model User {
-  id        Int      @id @default(autoincrement())
-  email     String   @unique
+  id        Int        @id @default(autoincrement())
+  email     String     @unique
   password  String
   firstName String?
   lastName  String?
@@ -18,16 +18,15 @@ model User {
   city      String?
   country   String?
   image     String?
-  role      Role     @default(CUSTOMER)
+  role      Role       @default(CUSTOMER)
   cart      Cart?
   favorites Favorite[]
   orders    Order[]
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
 
   @@map("users")
 }
-
 
 enum Role {
   CUSTOMER
@@ -66,11 +65,13 @@ model Product {
   sku            String      @unique
   brand          String?
   audience       Audience
-  thumbnails     Json?     // Array of URLs
-  colors         Json?     // Array of Strings
-  sizes          Json?     // Array of Strings
+  stock          Int         @default(0)
+  thumbnails     Json? // Array of URLs
+  colors         Json? // Array of Strings
+  sizes          Json? // Array of Strings
   additionalInfo String?     @db.Text
   isActive       Boolean     @default(true)
+  isBestSeller   Boolean     @default(false)
   categoryId     Int
   category       Category    @relation(fields: [categoryId], references: [id])
   brandId        Int?
@@ -96,11 +97,11 @@ model Cart {
 }
 
 model CartItem {
-  id            Int      @id @default(autoincrement())
+  id            Int     @id @default(autoincrement())
   cartId        Int
-  cart          Cart     @relation(fields: [cartId], references: [id])
+  cart          Cart    @relation(fields: [cartId], references: [id])
   productId     Int
-  product       Product  @relation(fields: [productId], references: [id])
+  product       Product @relation(fields: [productId], references: [id])
   quantity      Int
   selectedSize  String?
   selectedColor String?
@@ -121,18 +122,18 @@ model Favorite {
 }
 
 model Order {
-  id          Int      @id @default(autoincrement())
-  userId      Int
-  user        User     @relation(fields: [userId], references: [id])
-  totalAmount Decimal  @db.Decimal(10, 2)
-  status      String   @default("PENDING") // PENDING, COMPLETED, CANCELLED
-  items       OrderItem[]
+  id              Int         @id @default(autoincrement())
+  userId          Int
+  user            User        @relation(fields: [userId], references: [id])
+  totalAmount     Decimal     @db.Decimal(10, 2)
+  status          String      @default("PENDING") // PENDING, COMPLETED, CANCELLED
+  items           OrderItem[]
   shippingAddress String?
   phone           String?
-  paymentMethod   String    @default("COD") // COD, CARD, MOCK
-  paymentStatus   String    @default("PENDING") // PENDING, PAID, FAILED
-  createdAt       DateTime  @default(now())
-  updatedAt       DateTime  @updatedAt
+  paymentMethod   String      @default("COD") // COD, CARD, MOCK
+  paymentStatus   String      @default("PENDING") // PENDING, PAID, FAILED
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
 
   @@map("orders")
 }
@@ -152,14 +153,53 @@ model OrderItem {
 }
 
 model Brand {
-  id        Int       @id @default(autoincrement())
-  name      String    @unique
-  slug      String    @unique
-  image     String?
-  isActive  Boolean   @default(true)
-  products  Product[]
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
+  id          Int       @id @default(autoincrement())
+  name        String    @unique
+  slug        String    @unique
+  image       String?
+  description String?   @db.Text
+  isActive    Boolean   @default(true)
+  products    Product[]
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
 
   @@map("brands")
+}
+
+model StaticPage {
+  id        Int      @id @default(autoincrement())
+  title     String   @unique
+  slug      String   @unique
+  content   String   @db.LongText
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("static_pages")
+}
+
+model ContactMessage {
+  id        Int      @id @default(autoincrement())
+  name      String
+  email     String
+  subject   String
+  message   String
+  createdAt DateTime @default(now())
+}
+
+model Coupon {
+  id             Int      @id @default(autoincrement())
+  code           String   @unique
+  type           String   // PERCENT or FIXED
+  value          Decimal  @db.Decimal(10, 2)
+  minOrderAmount Decimal? @db.Decimal(10, 2)
+  maxDiscount    Decimal? @db.Decimal(10, 2)
+  usageLimit     Int?
+  usageCount     Int      @default(0)
+  isActive       Boolean  @default(true)
+  expiresAt      DateTime?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  @@map("coupons")
 }

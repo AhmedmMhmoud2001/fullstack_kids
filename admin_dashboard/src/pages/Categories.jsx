@@ -66,12 +66,12 @@ const Categories = () => {
     const isSystemAdmin = user?.role === 'SYSTEM_ADMIN';
 
     return (
-        <div className="space-y-6">
+        <div className="space-y-6 overflow-x-hidden">
             {/* Header */}
-            <div className="flex items-center justify-between">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                 <div>
-                    <h1 className="text-3xl font-bold text-gray-900">Categories</h1>
-                    <p className="text-gray-600 mt-1">
+                    <h1 className="text-2xl md:text-3xl font-bold text-gray-900 leading-tight">Categories</h1>
+                    <p className="text-sm md:text-base text-gray-600 mt-1">
                         {isSystemAdmin
                             ? 'Manage categories for Kids and Next audiences'
                             : `Manage categories for ${user?.role === 'ADMIN_KIDS' ? 'Kids' : 'Next'} audience`}
@@ -79,7 +79,7 @@ const Categories = () => {
                 </div>
                 <button
                     onClick={() => navigate('/categories/new')}
-                    className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                    className="w-full sm:w-auto flex items-center justify-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors whitespace-nowrap"
                 >
                     <Plus size={20} />
                     Add Category
@@ -88,7 +88,7 @@ const Categories = () => {
 
             {/* Search and Filter Bar */}
             <div className="bg-white rounded-lg shadow-sm p-4">
-                <div className="flex gap-4">
+                <div className="flex flex-col md:flex-row gap-4">
                     <div className="relative flex-1">
                         <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
                         <input
@@ -103,7 +103,7 @@ const Categories = () => {
                         <select
                             value={audienceFilter}
                             onChange={(e) => setAudienceFilter(e.target.value)}
-                            className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            className="w-full md:w-auto px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                         >
                             <option value="">All Audiences</option>
                             <option value="KIDS">Kids</option>
@@ -115,8 +115,8 @@ const Categories = () => {
 
             {/* Categories Table */}
             <div className="bg-white rounded-lg shadow-sm overflow-hidden">
-                <div className="overflow-x-auto">
-                    <table className="w-full">
+                <div className="overflow-x-auto modern-scrollbar">
+                    <table className="w-full min-w-[800px]">
                         <thead className="bg-gray-50 border-b border-gray-200">
                             <tr>
                                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -213,14 +213,14 @@ const Categories = () => {
             </div>
 
             {/* Stats */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div className="bg-white rounded-lg shadow-sm p-6">
-                    <div className="text-sm text-gray-600">Total Categories</div>
-                    <div className="text-2xl font-bold text-gray-900 mt-1">{categories.length}</div>
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                <div className="bg-white rounded-lg shadow-sm p-4 md:p-6">
+                    <div className="text-xs md:text-sm text-gray-600">Total Categories</div>
+                    <div className="text-xl md:text-2xl font-bold text-gray-900 mt-1">{categories.length}</div>
                 </div>
-                <div className="bg-white rounded-lg shadow-sm p-6">
-                    <div className="text-sm text-gray-600">Active Categories</div>
-                    <div className="text-2xl font-bold text-green-600 mt-1">
+                <div className="bg-white rounded-lg shadow-sm p-4 md:p-6">
+                    <div className="text-xs md:text-sm text-gray-600">Active Categories</div>
+                    <div className="text-xl md:text-2xl font-bold text-green-600 mt-1">
                         {categories.filter(c => c.isActive).length}
                     </div>
                 </div>

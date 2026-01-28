@@ -7,10 +7,10 @@ async function main() {
     const password = await bcrypt.hash('password123', 10);
 
     const users = [
-        { email: 'customer@example.com', name: 'Customer User', role: 'CUSTOMER' },
-        { email: 'admin.kids@example.com', name: 'Kids Admin', role: 'ADMIN_KIDS' },
-        { email: 'admin.next@example.com', name: 'Next Admin', role: 'ADMIN_NEXT' },
-        { email: 'system@example.com', name: 'System Admin', role: 'SYSTEM_ADMIN' },
+        { email: 'customer@example.com', firstName: 'Customer User', role: 'CUSTOMER' },
+        { email: 'admin.kids@example.com', firstName: 'Kids Admin', role: 'ADMIN_KIDS' },
+        { email: 'admin.next@example.com', firstName: 'Next Admin', role: 'ADMIN_NEXT' },
+        { email: 'system@example.com', firstName: 'System Admin', role: 'SYSTEM_ADMIN' },
     ];
 
     for (const user of users) {
@@ -19,7 +19,7 @@ async function main() {
             update: {},
             create: {
                 email: user.email,
-                name: user.name,
+                firstName: user.firstName,
                 password: password,
                 role: user.role,
             },

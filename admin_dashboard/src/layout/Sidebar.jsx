@@ -10,10 +10,13 @@ import {
     UserCircle,
     LogOut,
     ChevronRight,
-    Tag
+    Tag,
+    Bell,
+    X,
+    Percent
 } from 'lucide-react';
 
-const Sidebar = () => {
+const Sidebar = ({ isOpen, onClose }) => {
     const { user, logout } = useApp();
     const role = user?.role;
     const menuItems = [
@@ -61,6 +64,36 @@ const Sidebar = () => {
             roles: ['SYSTEM_ADMIN', 'ADMIN_NEXT']
         },
         {
+            title: 'Our Brands',
+            path: '/brands',
+            icon: <Tag size={20} />,
+            roles: ['SYSTEM_ADMIN', 'ADMIN_KIDS', 'ADMIN_NEXT']
+        },
+        {
+            title: 'Coupons',
+            path: '/coupons',
+            icon: <Percent size={20} />,
+            roles: ['SYSTEM_ADMIN']
+        },
+        {
+            title: 'Static Content',
+            path: '/static-pages',
+            icon: <Folder size={20} />,
+            roles: ['SYSTEM_ADMIN']
+        },
+        {
+            title: 'Notifications',
+            path: '/notifications',
+            icon: <Bell size={20} />,
+            roles: ['SYSTEM_ADMIN', 'ADMIN_KIDS', 'ADMIN_NEXT']
+        },
+        {
+            title: 'Contact Messages',
+            path: '/contact',
+            icon: <Users size={20} />,
+            roles: ['SYSTEM_ADMIN', 'ADMIN_KIDS', 'ADMIN_NEXT']
+        },
+        {
             title: 'Profile',
             path: '/profile',
             icon: <UserCircle size={20} />,
@@ -73,15 +106,28 @@ const Sidebar = () => {
     );
 
     return (
-        <aside className="fixed left-0 top-0 h-screen w-64 bg-slate-900 text-white flex flex-col shadow-xl z-[9999]">
-            <div className="p-6 border-b border-slate-800">
-                <h1 className="text-2xl font-bold bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent">
-                    Kids & Co
-                </h1>
-                <p className="text-xs text-slate-400 mt-1 uppercase tracking-wider">{role?.replace('_', ' ')}</p>
+        <aside className={`
+            fixed left-0 top-0 h-screen w-64 bg-slate-900 text-white flex flex-col shadow-xl z-[9999]
+            transition-transform duration-300 ease-in-out
+            ${isOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
+        `}>
+            <div className="p-6 border-b border-slate-800 flex items-center justify-between">
+                <div>
+                    <h1 className="text-2xl font-bold bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent">
+                        Kids & Co
+                    </h1>
+                    <p className="text-xs text-slate-400 mt-1 uppercase tracking-wider">{role?.replace('_', ' ')}</p>
+                </div>
+                {/* Mobile Close Button */}
+                <button
+                    onClick={onClose}
+                    className="lg:hidden text-slate-400 hover:text-white transition-colors"
+                >
+                    <X size={24} />
+                </button>
             </div>
 
-            <nav className="flex-1 overflow-y-auto py-4">
+            <nav className="flex-1 overflow-y-auto py-4 modern-scrollbar">
                 <ul className="space-y-1 px-3">
                     {filteredItems.map((item) => (
                         <li key={item.path}>

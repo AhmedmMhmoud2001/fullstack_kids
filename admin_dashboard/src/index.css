@@ -1,16 +1,18 @@
 @import "tailwindcss";
 
 .brand-wordmark {
-  font-family: "Playfair Display", serif; /* نفس ستايل الصورة تقريبًا */
+  font-family: "Playfair Display", serif;
+  /* نفس ستايل الصورة تقريبًا */
   font-weight: 700;
-  letter-spacing: -0.02em; /* كيرننغ قريب من RiverIsland */
+  letter-spacing: -0.02em;
+  /* كيرننغ قريب من RiverIsland */
 }
 
 @layer base {
   body {
     @apply font-sans text-gray-900 bg-white;
   }
-  
+
   /* Smooth scrolling */
   html {
     scroll-behavior: smooth;
@@ -21,19 +23,20 @@
   .btn-primary {
     @apply bg-blue-500 hover:bg-blue-600 text-white font-medium py-2 px-4 rounded transition-colors;
   }
-  
+
   .btn-secondary {
     @apply bg-gray-200 hover:bg-gray-300 text-gray-900 font-medium py-2 px-4 rounded transition-colors;
   }
-  
+
   /* Mobile optimizations */
   @media (max-width: 768px) {
+
     /* Prevent text selection on mobile for better UX */
     .no-select {
       -webkit-user-select: none;
       user-select: none;
     }
-    
+
     /* Better tap highlights */
     * {
       -webkit-tap-highlight-color: rgba(99, 173, 252, 0.1);
@@ -42,46 +45,50 @@
 }
 
 @layer utilities {
+
   /* Animations */
   @keyframes slideInLeft {
     from {
       transform: translateX(-100%);
       opacity: 0;
     }
+
     to {
       transform: translateX(0);
       opacity: 1;
     }
   }
-  
+
   @keyframes slideInBottom {
     from {
       transform: translateY(100%);
       opacity: 0;
     }
+
     to {
       transform: translateY(0);
       opacity: 1;
     }
   }
-  
+
   @keyframes fadeIn {
     from {
       opacity: 0;
     }
+
     to {
       opacity: 1;
     }
   }
-  
+
   .animate-slide-in-left {
     animation: slideInLeft 0.3s ease-out;
   }
-  
+
   .animate-slide-in-bottom {
     animation: slideInBottom 0.3s ease-out;
   }
-  
+
   .animate-fade-in {
     animation: fadeIn 0.2s ease-out;
   }
@@ -125,11 +132,69 @@
 
 /* Hide scrollbar while keeping functionality */
 .scrollbar-hide {
-  -ms-overflow-style: none;  /* IE and Edge */
-  scrollbar-width: none;  /* Firefox */
+  -ms-overflow-style: none;
+  /* IE and Edge */
+  scrollbar-width: none;
+  /* Firefox */
 }
 
 .scrollbar-hide::-webkit-scrollbar {
-  display: none;  /* Chrome, Safari and Opera */
+  display: none;
+  /* Chrome, Safari and Opera */
 }
 
+/* Modern Scrollbar utility */
+.modern-scrollbar::-webkit-scrollbar {
+  width: 5px;
+}
+
+.modern-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.modern-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(148, 163, 184, 0.2);
+  border-radius: 20px;
+}
+
+.modern-scrollbar:hover::-webkit-scrollbar-thumb {
+  background: rgba(148, 163, 184, 0.4);
+}
+
+.modern-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: rgba(148, 163, 184, 0.6);
+}
+
+/* React Quill Custom Styling */
+.quill {
+  display: flex;
+  flex-direction: column;
+}
+
+.ql-toolbar.ql-snow {
+  border: 1px solid #e2e8f0 !important;
+  border-top-left-radius: 0.5rem;
+  border-top-right-radius: 0.5rem;
+  background-color: #f8fafc;
+  padding: 12px !important;
+}
+
+.ql-container.ql-snow {
+  border: 1px solid #e2e8f0 !important;
+  border-bottom-left-radius: 0.5rem;
+  border-bottom-right-radius: 0.5rem;
+  font-family: inherit !important;
+  font-size: 1rem !important;
+  flex: 1;
+  overflow-y: auto;
+}
+
+.ql-editor {
+  min-height: 400px;
+  padding: 20px !important;
+}
+
+.ql-editor.ql-blank::before {
+  color: #94a3b8 !important;
+  font-style: normal !important;
+}

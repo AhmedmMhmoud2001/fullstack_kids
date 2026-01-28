@@ -7,7 +7,7 @@ function generateProductImages(productName, count = 6) {
 
     for (let i = 0; i < count; i++) {
         const color = colors[i % colors.length];
-        const imageUrl = `https://via.placeholder.com/600x600/${color}/FFFFFF?text=${encodeURIComponent(productName)}+${i + 1}`;
+        const imageUrl = `https://placehold.co/600x600/${color}/FFFFFF?text=${encodeURIComponent(productName)}+${i + 1}`;
         images.push(imageUrl);
     }
 

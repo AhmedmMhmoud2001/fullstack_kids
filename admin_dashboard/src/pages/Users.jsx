@@ -159,22 +159,21 @@ const Users = () => {
             case 'SYSTEM_ADMIN': return 'bg-red-100 text-red-800';
             case 'ADMIN_KIDS': return 'bg-blue-100 text-blue-800';
             case 'ADMIN_NEXT': return 'bg-purple-100 text-purple-800';
-            case 'SELLER': return 'bg-yellow-100 text-yellow-800';
             default: return 'bg-gray-100 text-gray-800';
         }
     };
 
     return (
-        <div className="space-y-6">
+        <div className="space-y-6 overflow-x-hidden">
             {/* Header */}
-            <div className="flex items-center justify-between">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                 <div>
-                    <h1 className="text-3xl font-bold text-gray-900">User Management</h1>
-                    <p className="text-gray-600 mt-1">Manage system users, customer accounts, and roles</p>
+                    <h1 className="text-2xl md:text-3xl font-bold text-gray-900 leading-tight">User Management</h1>
+                    <p className="text-sm md:text-base text-gray-600 mt-1">Manage system users, customer accounts, and roles</p>
                 </div>
                 <button
                     onClick={() => handleOpenModal('create')}
-                    className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                    className="w-full sm:w-auto flex items-center justify-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors whitespace-nowrap shadow-md text-sm md:text-base font-medium"
                 >
                     <Plus size={20} />
                     Add User
@@ -197,9 +196,9 @@ const Users = () => {
 
             {/* Users Table */}
             <div className="bg-white rounded-lg shadow-sm overflow-hidden">
-                <div className="overflow-x-auto">
-                    <table className="w-full">
-                        <thead className="bg-gray-50 border-b border-gray-200">
+                <div className="overflow-x-auto modern-scrollbar">
+                    <table className="w-full min-w-[1000px]">
+                        <thead className="bg-gray-50 border-b border-gray-200 sticky top-0 z-10">
                             <tr>
                                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">User</th>
                                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Role</th>
@@ -376,7 +375,6 @@ const Users = () => {
                                             <option value="SYSTEM_ADMIN">System Admin</option>
                                             <option value="ADMIN_KIDS">Admin Kids</option>
                                             <option value="ADMIN_NEXT">Admin Next</option>
-                                            <option value="SELLER">Seller</option>
                                         </select>
                                     </div>
                                 </div>

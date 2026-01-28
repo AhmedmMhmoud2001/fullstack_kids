@@ -5,6 +5,7 @@ const dashboardRoutes = require('./modules/dashboard/dashboard.routes');
 const categoriesRoutes = require('./modules/categories/categories.routes');
 const productsRoutes = require('./modules/products/products.routes');
 const ordersRoutes = require('./modules/orders/orders.routes');
+const couponsRoutes = require('./modules/coupons/coupons.routes');
 
 // Mount routes
 router.use('/auth', authRoutes);
@@ -12,6 +13,7 @@ router.use('/dashboard', dashboardRoutes);
 router.use('/categories', categoriesRoutes);
 router.use('/products', productsRoutes);
 router.use('/orders', ordersRoutes);
+router.use('/coupons', couponsRoutes);
 router.use('/users', require('./modules/users/users.routes'));
 router.use('/cart', require('./modules/cart/cart.routes'));
 router.use('/favorites', require('./modules/favorites/favorites.routes'));
@@ -19,6 +21,7 @@ router.use('/brands', require('./modules/brands/brands.routes'));
 router.use('/upload', require('./modules/upload/upload.routes'));
 router.use('/checkout', require('./modules/checkout/checkout.routes'));
 router.use('/payment', require('./modules/payment/payment.routes'));
+router.use('/static-pages', require('./modules/static-pages/static-pages.routes'));
 
 // Health check
 router.get('/health', (req, res) => {
