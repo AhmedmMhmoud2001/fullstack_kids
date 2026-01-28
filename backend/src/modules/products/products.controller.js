@@ -47,6 +47,31 @@ exports.findAll = async (req, res) => {
             filter.isBestSeller = true;
         }
 
+        // Filter by category slug if provided
+        if (req.query.category) {
+            filter.categorySlug = req.query.category;
+        }
+
+        // Additional filters
+        if (req.query.minPrice) filter.minPrice = parseFloat(req.query.minPrice);
+        if (req.query.maxPrice) filter.maxPrice = parseFloat(req.query.maxPrice);
+
+        if (req.query.brands) {
+            filter.brands = req.query.brands.split(',');
+        }
+
+        if (req.query.colors) {
+            filter.colors = req.query.colors.split(',');
+        }
+
+        if (req.query.sortBy) {
+            filter.sortBy = req.query.sortBy;
+        }
+
+        if (req.query.search) {
+            filter.search = req.query.search;
+        }
+
         const products = await productService.findAll(filter);
         res.json({ success: true, data: products });
     } catch (error) {
