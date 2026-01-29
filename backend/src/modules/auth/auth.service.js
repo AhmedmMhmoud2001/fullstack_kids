@@ -62,6 +62,70 @@ exports.login = async (email, password) => {
         redirectPath
     };
 };
+
+exports.getMe = async (userId) => {
+    const user = await prisma.user.findUnique({
+        where: { id: userId },
+        select: {
+            id: true,
+            email: true,
+            firstName: true,
+            lastName: true,
+            phone: true,
+            address: true,
+            city: true,
+            country: true,
+            image: true,
+            role: true,
+            createdAt: true
+        }
+    });
+
+    if (!user) throw new Error('User not found');
+    return user;
+};
+
+exports.updateProfile = async (userId, data) => {
+    const { firstName, lastName, phone, address, city, country, image, password } = data;
+
+    let updateData = {
+        firstName,
+        lastName,
+        phone,
+        address,
+        city,
+        country,
+        image
+    };
+
+    if (password) {
+        updateData.password = await bcrypt.hash(password, 10);
+    }
+
+    // Filter out undefined values
+    Object.keys(updateData).forEach(key => updateData[key] === undefined && delete updateData[key]);
+
+    const user = await prisma.user.update({
+        where: { id: userId },
+        data: updateData,
+        select: {
+            id: true,
+            email: true,
+            firstName: true,
+            lastName: true,
+            phone: true,
+            address: true,
+            city: true,
+            country: true,
+            image: true,
+            role: true,
+            createdAt: true
+        }
+    });
+
+    return user;
+};
+
 exports.register = async (data) => {
     // 1. Check if user exists
     const existing = await prisma.user.findUnique({

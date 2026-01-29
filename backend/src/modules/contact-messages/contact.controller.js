@@ -1,6 +1,6 @@
-import * as contactService from './contact.service.js';
+const contactService = require('./contact.service');
 
-export const sendMessage = async (req, res) => {
+exports.sendMessage = async (req, res) => {
     try {
         const { name, email, subject, message } = req.body;
 
@@ -10,29 +10,32 @@ export const sendMessage = async (req, res) => {
 
         await contactService.createMessage(req.body);
 
-        res.status(201).json({ message: 'Message sent successfully' });
+        res.status(201).json({ success: true, message: 'Message sent successfully' });
     } catch (error) {
-        res.status(500).json({ message: 'Something went wrong' });
+        console.error('Send message error:', error);
+        res.status(500).json({ success: false, message: 'Something went wrong' });
     }
 };
 
-export const getMessages = async (req, res) => {
+exports.getMessages = async (req, res) => {
     try {
         const messages = await contactService.getAllMessages();
-        res.json(messages);
+        res.json({ success: true, data: messages });
     } catch (error) {
-        res.status(500).json({ message: 'Something went wrong' });
+        console.error('Get messages error:', error);
+        res.status(500).json({ success: false, message: 'Something went wrong' });
     }
 };
 
-export const deleteMessage = async (req, res) => {
+exports.deleteMessage = async (req, res) => {
     try {
         const { id } = req.params;
 
         await contactService.deleteMessageById(Number(id));
 
-        res.json({ message: 'Message deleted successfully' });
+        res.json({ success: true, message: 'Message deleted successfully' });
     } catch (error) {
-        res.status(500).json({ message: 'Something went wrong' });
+        console.error('Delete message error:', error);
+        res.status(500).json({ success: false, message: 'Something went wrong' });
     }
 };

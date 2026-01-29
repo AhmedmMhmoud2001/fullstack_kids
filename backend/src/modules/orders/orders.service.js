@@ -4,19 +4,20 @@ const prisma = require('../../config/db');
 exports.create = async (userId, itemsData, additionalData = {}) => {
     // itemsData = [{ productId, quantity }]
 
-    // 1. Fetch products to get current price and audience
-    const productIds = itemsData.map(i => i.productId);
+    // 1. Fetch products to get current price
+    const productIds = itemsData.map(i => Number(i.productId));
     const products = await prisma.product.findMany({
         where: { id: { in: productIds } }
     });
 
     const productMap = new Map(products.map(p => [p.id, p]));
 
-    let totalAmount = 0;
+    let subtotal = 0;
     const orderItemsData = [];
 
     for (const item of itemsData) {
-        const product = productMap.get(item.productId);
+        const productId = Number(item.productId);
+        const product = productMap.get(productId);
         if (!product) {
             throw new Error(`Product ${item.productId} not found`);
         }
@@ -25,27 +26,33 @@ exports.create = async (userId, itemsData, additionalData = {}) => {
         }
 
         const itemTotal = Number(product.price) * item.quantity;
-        totalAmount += itemTotal;
+        subtotal += itemTotal;
 
         orderItemsData.push({
             productId: product.id,
+            productName: product.name, // Save name at time of purchase
             quantity: item.quantity,
-            price: product.price,
-            audience: product.audience, // Critical: Snapshot audience
-            status: 'PENDING'
+            priceAtPurchase: product.price
         });
     }
+
+    const shippingFee = additionalData.shippingFee || 0;
+    const discount = additionalData.discount || 0;
+    const totalAmount = subtotal + Number(shippingFee) - Number(discount);
 
     // 2. Create Order and Items
     return prisma.order.create({
         data: {
             userId,
-            totalAmount,
             status: 'PENDING',
-            shippingAddress: additionalData.shippingAddress || null,
-            phone: additionalData.phone || null,
+            subtotal,
+            shippingFee,
+            discount,
+            totalAmount,
             paymentMethod: additionalData.paymentMethod || 'COD',
-            paymentStatus: 'PENDING',
+            notes: additionalData.notes || null,
+            billingInfo: additionalData.billingInfo || null,
+            shippingAddress: additionalData.shippingAddress || null,
             items: {
                 create: orderItemsData
             }
@@ -97,13 +104,6 @@ exports.findOne = async (id, itemWhere = {}) => {
 exports.updateStatus = async (id, status) => {
     return prisma.order.update({
         where: { id: parseInt(id) },
-        data: { status }
-    });
-};
-
-exports.updateItemStatus = async (itemId, status) => {
-    return prisma.orderItem.update({
-        where: { id: parseInt(itemId) },
         data: { status }
     });
 };

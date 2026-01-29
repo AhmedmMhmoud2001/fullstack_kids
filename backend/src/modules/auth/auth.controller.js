@@ -22,6 +22,37 @@ exports.login = async (req, res) => {
     }
 };
 
+exports.getMe = async (req, res) => {
+    try {
+        const user = await authService.getMe(req.user.id);
+        res.json({
+            success: true,
+            data: user
+        });
+    } catch (error) {
+        res.status(404).json({
+            success: false,
+            message: error.message
+        });
+    }
+};
+
+exports.updateMe = async (req, res) => {
+    try {
+        const user = await authService.updateProfile(req.user.id, req.body);
+        res.json({
+            success: true,
+            message: 'Profile updated successfully',
+            data: user
+        });
+    } catch (error) {
+        res.status(400).json({
+            success: false,
+            message: error.message
+        });
+    }
+};
+
 exports.register = async (req, res) => {
     try {
         const { email, password, firstName, lastName } = req.body;

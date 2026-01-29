@@ -174,4 +174,82 @@ exports.deleteCoupon = async (req, res, next) => {
     }
 };
 
+// VALIDATE COUPON (Public)
+exports.validateCoupon = async (req, res, next) => {
+    try {
+        const { code, amount } = req.body;
 
+        if (!code) {
+            return res.status(400).json({
+                success: false,
+                message: 'Coupon code is required',
+            });
+        }
+
+        const coupon = await couponsService.findByCode(code);
+
+        if (!coupon) {
+            return res.status(404).json({
+                success: false,
+                message: 'Invalid coupon code',
+            });
+        }
+
+        if (!coupon.isActive) {
+            return res.status(400).json({
+                success: false,
+                message: 'Coupon is inactive',
+            });
+        }
+
+        // Check expiration
+        if (coupon.expiresAt && new Date(coupon.expiresAt) < new Date()) {
+            return res.status(400).json({
+                success: false,
+                message: 'Coupon has expired',
+            });
+        }
+
+        // Check usage limit
+        if (coupon.usageLimit && coupon.usageCount >= coupon.usageLimit) {
+            return res.status(400).json({
+                success: false,
+                message: 'Coupon usage limit reached',
+            });
+        }
+
+        // Check minimum order amount
+        if (amount && coupon.minOrderAmount && amount < coupon.minOrderAmount) {
+            return res.status(400).json({
+                success: false,
+                message: `Minimum order amount for this coupon is ${coupon.minOrderAmount} EE`,
+            });
+        }
+
+        // Calculate discount
+        let discount = 0;
+        if (coupon.type === 'PERCENT') {
+            discount = (amount * coupon.value) / 100;
+            if (coupon.maxDiscount && discount > coupon.maxDiscount) {
+                discount = coupon.maxDiscount;
+            }
+        } else {
+            discount = coupon.value;
+        }
+
+        res.json({
+            success: true,
+            message: 'Coupon validated successfully',
+            data: {
+                id: coupon.id,
+                code: coupon.code,
+                type: coupon.type,
+                value: coupon.value,
+                discount: discount
+            }
+        });
+
+    } catch (error) {
+        next(error);
+    }
+};

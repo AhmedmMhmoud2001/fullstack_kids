@@ -6,6 +6,7 @@ const { authorize } = require('../../middlewares/role.middleware');
 
 // Public Read (Optional Auth for role filtering)
 router.get('/', authenticateOptional, controller.findAll);
+router.get('/colors', controller.getColors);
 router.get('/:id', authenticateOptional, controller.findOne);
 
 // Protected Write

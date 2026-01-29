@@ -23,6 +23,7 @@ const CategoryForm = () => {
         slug: '',
         image: '',
         audience: getInitialAudience(),
+        sortOrder: 0,
         isActive: true
     });
 
@@ -54,6 +55,7 @@ const CategoryForm = () => {
                     slug: response.data.slug,
                     image: response.data.image || '',
                     audience: response.data.audience,
+                    sortOrder: response.data.sortOrder || 0,
                     isActive: response.data.isActive
                 });
             } else {
@@ -257,6 +259,24 @@ const CategoryForm = () => {
                             </button>
                         </div>
                     )}
+                </div>
+
+                {/* Sort Order */}
+                <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                        Sort Order
+                    </label>
+                    <input
+                        type="number"
+                        name="sortOrder"
+                        value={formData.sortOrder}
+                        onChange={(e) => setFormData({ ...formData, sortOrder: parseInt(e.target.value) || 0 })}
+                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"
+                        placeholder="0"
+                    />
+                    <p className="text-xs text-gray-500 mt-1">
+                        Lower numbers appear first.
+                    </p>
                 </div>
 
                 {/* Is Active */}

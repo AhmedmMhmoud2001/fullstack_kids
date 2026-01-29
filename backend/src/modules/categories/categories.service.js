@@ -11,14 +11,25 @@ exports.findAll = async (audience = null) => {
     return prisma.category.findMany({
         where,
         include: { _count: { select: { products: true } } },
-        orderBy: { createdAt: 'desc' }
+        orderBy: [
+            { sortOrder: 'asc' },
+            { createdAt: 'desc' }
+        ]
     });
 };
 
 // Find One
-exports.findOne = async (id) => {
-    return prisma.category.findUnique({
-        where: { id: parseInt(id) },
+exports.findOne = async (idOrSlug) => {
+    // If it's a number, find by ID
+    if (!isNaN(idOrSlug)) {
+        return prisma.category.findUnique({
+            where: { id: parseInt(idOrSlug) },
+            include: { products: true }
+        });
+    }
+    // Otherwise find by slug
+    return prisma.category.findFirst({
+        where: { slug: idOrSlug },
         include: { products: true }
     });
 };

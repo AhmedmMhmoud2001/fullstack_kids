@@ -34,4 +34,11 @@ exports.delete = async (id) => {
     });
 };
 
+// Find by Code
+exports.findByCode = async (code) => {
+    return prisma.coupon.findUnique({
+        where: { code: String(code).toUpperCase() },
+    });
+};
+
 

@@ -22,6 +22,7 @@ router.use('/upload', require('./modules/upload/upload.routes'));
 router.use('/checkout', require('./modules/checkout/checkout.routes'));
 router.use('/payment', require('./modules/payment/payment.routes'));
 router.use('/static-pages', require('./modules/static-pages/static-pages.routes'));
+router.use('/contact', require('./modules/contact-messages/contact.routes'));
 
 // Health check
 router.get('/health', (req, res) => {

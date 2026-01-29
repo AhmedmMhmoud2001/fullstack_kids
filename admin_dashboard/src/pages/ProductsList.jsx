@@ -47,6 +47,17 @@ const ProductsList = ({ audience, title }) => {
         }
     };
 
+    const safeParse = (data, fallback = []) => {
+        if (!data) return fallback;
+        if (typeof data !== 'string') return data;
+        try {
+            return JSON.parse(data);
+        } catch (e) {
+            console.error("JSON Parse Error:", e, "Data:", data);
+            return fallback;
+        }
+    };
+
     const filteredProducts = products.filter(p =>
         p.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
         p.sku.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -92,16 +103,16 @@ const ProductsList = ({ audience, title }) => {
                 {filteredProducts.map((product) => (
                     <div key={product.id} className="bg-white rounded-lg shadow-sm overflow-hidden hover:shadow-md transition-shadow">
                         {/* Product Image */}
-                        <div className="relative h-48 bg-gray-100">
-                            {product.thumbnails && JSON.parse(product.thumbnails)[0] ? (
+                        <div className="relative h-48 bg-blue-50/50 flex items-center justify-center">
+                            {safeParse(product.thumbnails)[0] ? (
                                 <img
-                                    src={JSON.parse(product.thumbnails)[0]}
+                                    src={safeParse(product.thumbnails)[0]}
                                     alt={product.name}
                                     className="w-full h-full object-cover"
                                 />
                             ) : (
-                                <div className="w-full h-full flex items-center justify-center text-gray-400">
-                                    <span className="text-sm">No Image</span>
+                                <div className="w-full h-full flex items-center justify-center text-blue-200 font-bold text-4xl uppercase select-none">
+                                    {product.name.substring(0, 2)}
                                 </div>
                             )}
                             <div className="absolute top-2 right-2 flex flex-col gap-1">
@@ -215,11 +226,11 @@ const ProductsList = ({ audience, title }) => {
                         </div>
                         <div className="p-6 space-y-4">
                             {/* Images */}
-                            {selectedProduct.thumbnails && JSON.parse(selectedProduct.thumbnails).length > 0 && (
+                            {safeParse(selectedProduct.thumbnails).length > 0 && (
                                 <div>
-                                    <p className="text-sm text-gray-600 mb-2 font-semibold">Product Images ({JSON.parse(selectedProduct.thumbnails).length})</p>
+                                    <p className="text-sm text-gray-600 mb-2 font-semibold">Product Images ({safeParse(selectedProduct.thumbnails).length})</p>
                                     <div className="grid grid-cols-3 gap-2">
-                                        {JSON.parse(selectedProduct.thumbnails).map((img, idx) => (
+                                        {safeParse(selectedProduct.thumbnails).map((img, idx) => (
                                             <div key={idx} className="relative group">
                                                 <img
                                                     src={img}
@@ -270,22 +281,22 @@ const ProductsList = ({ audience, title }) => {
                                 </div>
                             )}
 
-                            {selectedProduct.colors && JSON.parse(selectedProduct.colors).length > 0 && (
+                            {safeParse(selectedProduct.colors).length > 0 && (
                                 <div>
                                     <p className="text-sm text-gray-600 mb-1">Available Colors</p>
                                     <div className="flex gap-2 flex-wrap">
-                                        {JSON.parse(selectedProduct.colors).map((color, idx) => (
+                                        {safeParse(selectedProduct.colors).map((color, idx) => (
                                             <span key={idx} className="px-3 py-1 bg-gray-100 rounded-full text-sm">{color}</span>
                                         ))}
                                     </div>
                                 </div>
                             )}
 
-                            {selectedProduct.sizes && JSON.parse(selectedProduct.sizes).length > 0 && (
+                            {safeParse(selectedProduct.sizes).length > 0 && (
                                 <div>
                                     <p className="text-sm text-gray-600 mb-1">Available Sizes</p>
                                     <div className="flex gap-2 flex-wrap">
-                                        {JSON.parse(selectedProduct.sizes).map((size, idx) => (
+                                        {safeParse(selectedProduct.sizes).map((size, idx) => (
                                             <span key={idx} className="px-3 py-1 bg-gray-100 rounded-full text-sm">{size}</span>
                                         ))}
                                     </div>

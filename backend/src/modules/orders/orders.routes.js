@@ -13,19 +13,11 @@ router.get('/', authenticate, ordersController.getAllOrders);
 // Get Single Order
 router.get('/:id', authenticate, ordersController.getOrderById);
 
-// Update Order Status (System Admin Only)
+// Update Order Status (Admins)
 router.patch('/:id/status',
     authenticate,
-    authorize(['SYSTEM_ADMIN']),
-    ordersController.updateOrderStatus
-);
-
-// Update Order Item Status (Admins)
-// We allow all admins to hit this, but we should Validate ownership inside controller or here
-router.patch('/items/:itemId/status',
-    authenticate,
     authorize(['SYSTEM_ADMIN', 'ADMIN_KIDS', 'ADMIN_NEXT']),
-    ordersController.updateOrderItemStatus
+    ordersController.updateOrderStatus
 );
 
 module.exports = router;

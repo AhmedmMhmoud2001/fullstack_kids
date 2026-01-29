@@ -5,7 +5,10 @@ const couponsController = require('./coupons.controller');
 const { authenticate } = require('../../middlewares/auth.middleware');
 const { authorize } = require('../../middlewares/role.middleware');
 
-// All coupon routes are for admins only (currently SYSTEM_ADMIN)
+// Public/User routes
+router.post('/validate', authenticate, couponsController.validateCoupon);
+
+// All coupon routes below are for admins only (currently SYSTEM_ADMIN)
 const adminRoles = ['SYSTEM_ADMIN'];
 
 // List all coupons

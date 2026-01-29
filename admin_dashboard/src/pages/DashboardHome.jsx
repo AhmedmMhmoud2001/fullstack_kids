@@ -6,9 +6,13 @@ import {
 import {
     TrendingUp, TrendingDown, Users, DollarSign,
     ShoppingCart, Activity, MousePointer2, Percent,
-    Eye
+    Eye, Package, Folder, Tag, Plus, PlusCircle
 } from 'lucide-react';
 import { fetchOrders } from '../api/orders';
+import { fetchProducts } from '../api/products';
+import { fetchCategories } from '../api/categories';
+import brandsApi from '../api/brands';
+import couponsApi from '../api/coupons';
 import { useNavigate } from 'react-router-dom';
 
 // Mock data for charts
@@ -33,14 +37,13 @@ const ordersStats = [
 ];
 
 const StatCard = ({ title, value, icon, change, isDown, iconBg }) => (
-    <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100 flex justify-between items-start">
+    <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100 flex justify-between items-start hover:shadow-md transition-shadow">
         <div>
             <p className="text-sm font-bold text-gray-400 uppercase tracking-wider">{title}</p>
             <h3 className="text-2xl font-black text-gray-800 mt-1">{value}</h3>
             <div className={`flex items-center gap-1 mt-2 text-sm font-bold ${isDown ? 'text-red-500' : 'text-emerald-500'}`}>
                 {isDown ? <TrendingDown size={16} /> : <TrendingUp size={16} />}
                 <span>{change}</span>
-                <span className="text-gray-400 font-medium ml-1">Since last month</span>
             </div>
         </div>
         <div className={`p-3 rounded-full ${iconBg} text-white shadow-lg`}>
@@ -53,6 +56,10 @@ const DashboardHome = () => {
     const [stats, setStats] = useState({
         totalOrders: 0,
         totalRevenue: 0,
+        totalProducts: 0,
+        totalCategories: 0,
+        totalBrands: 0,
+        totalCoupons: 0,
         activeUsers: 890,
         performance: "49,65%"
     });
@@ -64,18 +71,36 @@ const DashboardHome = () => {
     useEffect(() => {
         const loadDashboardData = async () => {
             try {
-                const response = await fetchOrders();
-                if (response.success) {
-                    const orders = response.data;
+                const [ordersRes, productsRes, categoriesRes, brandsRes, couponsRes] = await Promise.all([
+                    fetchOrders(),
+                    fetchProducts(),
+                    fetchCategories(),
+                    brandsApi.getAll(),
+                    couponsApi.getAll()
+                ]);
+
+                if (ordersRes.success) {
+                    const orders = ordersRes.data;
                     setRecentOrders(orders.slice(0, 5));
                     const revenue = orders.reduce((sum, order) =>
-                        order.paymentStatus === 'PAID' ? sum + parseFloat(order.totalAmount) : sum, 0);
+                        order.status === 'PAID' ? sum + parseFloat(order.totalAmount) : sum, 0);
 
                     setStats(prev => ({
                         ...prev,
                         totalOrders: orders.length,
-                        totalRevenue: revenue
+                        totalRevenue: revenue,
+                        totalProducts: productsRes.success ? productsRes.data.length : 0,
+                        totalCategories: categoriesRes.success ? categoriesRes.data.length : 0,
+                        totalBrands: brandsRes.success ? brandsRes.data.length : 0, // brandsApi directly returns data or response? check api
+                        totalCoupons: couponsRes.success ? couponsRes.data.length : 0
                     }));
+
+                    // Handle brands if they are direct array
+                    if (Array.isArray(brandsRes)) {
+                        setStats(s => ({ ...s, totalBrands: brandsRes.length }));
+                    } else if (brandsRes.success) {
+                        setStats(s => ({ ...s, totalBrands: brandsRes.data.length }));
+                    }
                 }
             } catch (err) {
                 console.error('Error loading dashboard stats:', err);
@@ -87,77 +112,142 @@ const DashboardHome = () => {
     }, []);
 
     return (
-        <div className="-m-4 md:-m-6 overflow-x-hidden">
-            {/* Header / Dark Background Section */}
-            <div className="pt-6 md:pt-10 pb-24 md:pb-32 px-4 md:px-6 bg-slate-50 border-b border-gray-100">
+        <div className="-m-4 md:-m-6 overflow-x-hidden bg-gray-50/50">
+            {/* Header Section */}
+            <div className="pt-6 md:pt-10 pb-32 px-4 md:px-6 bg-slate-900 border-b border-slate-800 relative">
                 <div className="max-w-7xl mx-auto">
-                    <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8 md:mb-10">
+                    <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8 md:mb-12">
                         <div>
-                            <h1 className="text-2xl md:text-3xl font-black uppercase tracking-tighter text-slate-900 leading-tight">Performance Overview</h1>
-                            <p className="text-slate-500 mt-1 text-sm md:text-base">Real-time statistics for your store</p>
+                            <h1 className="text-2xl md:text-4xl font-black uppercase tracking-tighter text-white leading-tight">Dashboard Overview</h1>
+                            <p className="text-slate-400 mt-1 text-sm md:text-lg font-medium">Monitoring your store's growth and inventory</p>
                         </div>
                     </div>
 
-                    {/* Stat Cards Grid - Overlapping bottom */}
+                    {/* Primary Stat Cards Grid */}
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
                         <StatCard
-                            title="Traffic"
-                            value="350,897"
-                            icon={<MousePointer2 size={24} />}
-                            change="3.48%"
+                            title="Total Revenue"
+                            value={`${stats.totalRevenue.toFixed(2)} EE`}
+                            icon={<DollarSign size={24} />}
+                            change="8.5%+"
+                            iconBg="bg-emerald-500"
+                        />
+                        <StatCard
+                            title="Total Orders"
+                            value={stats.totalOrders}
+                            icon={<ShoppingCart size={24} />}
+                            change="1.10%+"
+                            iconBg="bg-amber-500"
+                        />
+                        <StatCard
+                            title="Products"
+                            value={stats.totalProducts}
+                            icon={<Package size={24} />}
+                            change="Live now"
                             iconBg="bg-pink-500"
                         />
                         <StatCard
-                            title="New Users"
-                            value="2,356"
-                            icon={<Users size={24} />}
-                            change="3.48%"
-                            isDown
-                            iconBg="bg-orange-500"
-                        />
-                        <StatCard
-                            title="Sales"
-                            value={stats.totalOrders}
-                            icon={<ShoppingCart size={24} />}
-                            change="1.10%"
-                            isDown
-                            iconBg="bg-yellow-500"
-                        />
-                        <StatCard
-                            title="Performance"
-                            value={stats.performance}
-                            icon={<Percent size={24} />}
-                            change="12%"
+                            title="Categories"
+                            value={stats.totalCategories}
+                            icon={<Folder size={24} />}
+                            change="Active"
                             iconBg="bg-cyan-500"
                         />
                     </div>
                 </div>
             </div>
 
-            {/* Main Content - Charts Section */}
-            <div className="max-w-7xl mx-auto px-4 md:px-6 -mt-12 md:-mt-16 space-y-6 md:space-y-8 pb-12">
+            {/* Content Section (Overlapping) */}
+            <div className="max-w-7xl mx-auto px-4 md:px-6 -mt-16 space-y-6 md:space-y-8 pb-12 relative z-10">
+                {/* Secondary Stats & Quick Actions */}
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    {/* Secondary Stats Row */}
+                    <div className="lg:col-span-2 grid grid-cols-2 gap-4">
+                        <div className="bg-white p-4 rounded-2xl shadow-sm border border-gray-100 flex items-center gap-4">
+                            <div className="p-3 rounded-xl bg-indigo-50 text-indigo-600">
+                                <Tag size={20} />
+                            </div>
+                            <div>
+                                <p className="text-xs font-bold text-gray-400 uppercase">Brands</p>
+                                <p className="text-xl font-black text-gray-800">{stats.totalBrands}</p>
+                            </div>
+                        </div>
+                        <div className="bg-white p-4 rounded-2xl shadow-sm border border-gray-100 flex items-center gap-4">
+                            <div className="p-3 rounded-xl bg-orange-50 text-orange-600">
+                                <Percent size={20} />
+                            </div>
+                            <div>
+                                <p className="text-xs font-bold text-gray-400 uppercase">Coupons</p>
+                                <p className="text-xl font-black text-gray-800">{stats.totalCoupons}</p>
+                            </div>
+                        </div>
+                        <div className="bg-white p-4 rounded-2xl shadow-sm border border-gray-100 flex items-center gap-4">
+                            <div className="p-3 rounded-xl bg-blue-50 text-blue-600">
+                                <Activity size={20} />
+                            </div>
+                            <div>
+                                <p className="text-xs font-bold text-gray-400 uppercase">Perf.</p>
+                                <p className="text-xl font-black text-gray-800">{stats.performance}</p>
+                            </div>
+                        </div>
+                        <div className="bg-white p-4 rounded-2xl shadow-sm border border-gray-100 flex items-center gap-4">
+                            <div className="p-3 rounded-xl bg-slate-50 text-slate-600">
+                                <Users size={20} />
+                            </div>
+                            <div>
+                                <p className="text-xs font-bold text-gray-400 uppercase">Users</p>
+                                <p className="text-xl font-black text-gray-800">{stats.activeUsers}</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Quick Actions Card */}
+                    <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+                        <h2 className="text-sm font-black text-gray-400 uppercase tracking-widest mb-4">Quick Actions</h2>
+                        <div className="grid grid-cols-2 gap-3">
+                            <button
+                                onClick={() => navigate('/kids/products/new')}
+                                className="flex flex-col items-center justify-center p-3 rounded-xl border border-dashed border-gray-200 hover:border-blue-400 hover:bg-blue-50 transition-all gap-2 group"
+                            >
+                                <PlusCircle className="text-gray-300 group-hover:text-blue-500" size={20} />
+                                <span className="text-[10px] font-bold text-gray-500 group-hover:text-blue-600 uppercase">Product</span>
+                            </button>
+                            <button
+                                onClick={() => navigate('/categories/new')}
+                                className="flex flex-col items-center justify-center p-3 rounded-xl border border-dashed border-gray-200 hover:border-pink-400 hover:bg-pink-50 transition-all gap-2 group"
+                            >
+                                <PlusCircle className="text-gray-300 group-hover:text-pink-500" size={20} />
+                                <span className="text-[10px] font-bold text-gray-500 group-hover:text-pink-600 uppercase">Category</span>
+                            </button>
+                            <button
+                                onClick={() => navigate('/brands')}
+                                className="flex flex-col items-center justify-center p-3 rounded-xl border border-dashed border-gray-200 hover:border-indigo-400 hover:bg-indigo-50 transition-all gap-2 group"
+                            >
+                                <PlusCircle className="text-gray-300 group-hover:text-indigo-500" size={20} />
+                                <span className="text-[10px] font-bold text-gray-500 group-hover:text-indigo-600 uppercase">Brand</span>
+                            </button>
+                            <button
+                                onClick={() => navigate('/coupons')}
+                                className="flex flex-col items-center justify-center p-3 rounded-xl border border-dashed border-gray-200 hover:border-orange-400 hover:bg-orange-50 transition-all gap-2 group"
+                            >
+                                <PlusCircle className="text-gray-300 group-hover:text-orange-500" size={20} />
+                                <span className="text-[10px] font-bold text-gray-500 group-hover:text-orange-600 uppercase">Coupon</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                {/* Charts Grid */}
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 md:gap-8">
                     {/* Main Sales Chart */}
                     <div className="lg:col-span-2 bg-white rounded-2xl shadow-sm border border-gray-100 p-4 md:p-6 overflow-hidden">
                         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6 md:mb-8">
                             <div>
-                                <h3 className="text-[10px] md:text-xs font-black text-gray-400 uppercase tracking-widest">Overview</h3>
-                                <h2 className="text-lg md:text-xl font-bold text-gray-800">Sales Value</h2>
-                            </div>
-                            <div className="flex bg-slate-50 p-1 rounded-xl w-full sm:w-auto overflow-x-auto">
-                                {['Month', 'Week'].map((t) => (
-                                    <button
-                                        key={t}
-                                        onClick={() => setTimeframe(t)}
-                                        className={`flex-1 sm:flex-none px-4 py-1.5 rounded-lg text-sm font-bold transition-all whitespace-nowrap ${timeframe === t ? 'bg-indigo-600 text-white shadow-md' : 'text-slate-500 hover:text-indigo-600'
-                                            }`}
-                                    >
-                                        {t}
-                                    </button>
-                                ))}
+                                <h3 className="text-[10px] md:text-xs font-black text-gray-400 uppercase tracking-widest">Analytics</h3>
+                                <h2 className="text-lg md:text-xl font-bold text-gray-800">Revenue Growth</h2>
                             </div>
                         </div>
-                        <div className="h-[250px] md:h-[350px] w-full">
+                        <div className="h-[250px] md:h-[300px] w-full">
                             <ResponsiveContainer width="100%" height="100%">
                                 <AreaChart data={salesData}>
                                     <defs>
@@ -167,11 +257,10 @@ const DashboardHome = () => {
                                         </linearGradient>
                                     </defs>
                                     <CartesianGrid vertical={false} strokeDasharray="3 3" stroke="#f1f5f9" />
-                                    <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fill: '#94a3b8', fontSize: 12 }} dy={10} />
-                                    <YAxis axisLine={false} tickLine={false} tick={{ fill: '#94a3b8', fontSize: 12 }} tickFormatter={(v) => `$${v / 1000}k`} />
+                                    <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fill: '#94a3b8', fontSize: 11 }} dy={10} />
+                                    <YAxis axisLine={false} tickLine={false} tick={{ fill: '#94a3b8', fontSize: 11 }} tickFormatter={(v) => `$${v / 1000}k`} />
                                     <Tooltip
                                         contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1)' }}
-                                        formatter={(v) => [`$${v.toLocaleString()}`, 'Value']}
                                     />
                                     <Area
                                         type="monotone"
@@ -189,13 +278,13 @@ const DashboardHome = () => {
                     {/* Total Orders Bar Chart */}
                     <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
                         <div className="mb-8">
-                            <h3 className="text-xs font-black text-gray-400 uppercase tracking-widest">Performance</h3>
+                            <h3 className="text-xs font-black text-gray-400 uppercase tracking-widest">Order Volume</h3>
                             <h2 className="text-xl font-bold text-gray-800">Total orders</h2>
                         </div>
-                        <div className="h-[350px] w-full">
+                        <div className="h-[250px] md:h-[300px] w-full">
                             <ResponsiveContainer width="100%" height="100%">
                                 <BarChart data={ordersStats}>
-                                    <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fill: '#94a3b8', fontSize: 12 }} dy={10} />
+                                    <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fill: '#94a3b8', fontSize: 11 }} dy={10} />
                                     <Tooltip
                                         cursor={{ fill: '#f8fafc' }}
                                         contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1)' }}
@@ -207,29 +296,29 @@ const DashboardHome = () => {
                     </div>
                 </div>
 
-                {/* Recent Activity Section */}
-                <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden mb-12">
+                {/* Recent Transactions Section */}
+                <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
                     <div className="p-4 md:p-6 border-b border-gray-100 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                         <div>
                             <h2 className="text-lg md:text-xl font-bold text-gray-900">Recent Transactions</h2>
-                            <p className="text-sm text-gray-500 text-balance">A detailed list of the latest orders</p>
+                            <p className="text-sm text-gray-500">Overview of the last 5 orders placed</p>
                         </div>
                         <button
                             onClick={() => navigate('/kids/orders')}
-                            className="w-full sm:w-auto px-6 py-2 bg-slate-900 text-white rounded-xl text-sm font-bold hover:bg-slate-800 transition-all shadow-lg active:scale-95 whitespace-nowrap"
+                            className="w-full sm:w-auto px-6 py-2.5 bg-slate-900 text-white rounded-xl text-sm font-bold hover:bg-slate-800 transition-all shadow-lg active:scale-95"
                         >
-                            View All Orders
+                            Manage All Orders
                         </button>
                     </div>
-                    <div className="overflow-x-auto modern-scrollbar">
+                    <div className="overflow-x-auto">
                         <table className="w-full text-left min-w-[600px]">
-                            <thead className="bg-gray-50 border-b border-gray-100">
+                            <thead className="bg-gray-50/50 border-b border-gray-100">
                                 <tr>
-                                    <th className="px-6 py-4 text-xs font-black text-gray-400 uppercase tracking-widest">Id</th>
-                                    <th className="px-6 py-4 text-xs font-black text-gray-400 uppercase tracking-widest">Customer</th>
-                                    <th className="px-6 py-4 text-xs font-black text-gray-400 uppercase tracking-widest">Amount</th>
-                                    <th className="px-6 py-4 text-xs font-black text-gray-400 uppercase tracking-widest">Status</th>
-                                    <th className="px-6 py-4 text-xs font-black text-gray-400 uppercase tracking-widest text-right">Details</th>
+                                    <th className="px-6 py-4 text-[10px] font-black text-gray-400 uppercase tracking-widest">Order ID</th>
+                                    <th className="px-6 py-4 text-[10px] font-black text-gray-400 uppercase tracking-widest">Customer</th>
+                                    <th className="px-6 py-4 text-[10px] font-black text-gray-400 uppercase tracking-widest">Amount</th>
+                                    <th className="px-6 py-4 text-[10px] font-black text-gray-400 uppercase tracking-widest">Status</th>
+                                    <th className="px-6 py-4 text-[10px] font-black text-gray-400 uppercase tracking-widest text-right">Actions</th>
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-gray-100">
@@ -238,7 +327,7 @@ const DashboardHome = () => {
                                         <td className="px-6 py-4 font-bold text-gray-900">#{order.id}</td>
                                         <td className="px-6 py-4">
                                             <div className="flex items-center gap-3">
-                                                <div className="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-xs font-bold text-slate-600">
+                                                <div className="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-[10px] font-black text-slate-600">
                                                     {order.user?.firstName?.[0]}{order.user?.lastName?.[0]}
                                                 </div>
                                                 <div>
@@ -247,25 +336,32 @@ const DashboardHome = () => {
                                                 </div>
                                             </div>
                                         </td>
-                                        <td className="px-6 py-4 font-black text-indigo-600">
-                                            ${parseFloat(order.totalAmount).toFixed(2)}
+                                        <td className="px-6 py-4 font-black text-blue-600">
+                                            {parseFloat(order.totalAmount).toFixed(2)} EE
                                         </td>
                                         <td className="px-6 py-4">
-                                            <span className={`px-3 py-1 text-[10px] font-black rounded-lg uppercase tracking-wider ${order.paymentStatus === 'PAID' ? 'bg-emerald-100 text-emerald-700' : 'bg-red-100 text-red-700'
+                                            <span className={`px-2 py-1 text-[9px] font-black rounded-lg uppercase tracking-wider ${order.status === 'PAID' ? 'bg-emerald-100 text-emerald-700' : 'bg-amber-100 text-amber-700'
                                                 }`}>
-                                                {order.paymentStatus}
+                                                {order.status}
                                             </span>
                                         </td>
                                         <td className="px-6 py-4 text-right">
                                             <button
                                                 onClick={() => navigate(`/kids/orders`)}
-                                                className="p-2 hover:bg-slate-100 rounded-lg transition-colors text-slate-400 hover:text-indigo-600"
+                                                className="p-2 hover:bg-slate-100 rounded-lg text-slate-400 transition-colors"
                                             >
-                                                <Eye size={20} />
+                                                <Eye size={18} />
                                             </button>
                                         </td>
                                     </tr>
                                 ))}
+                                {recentOrders.length === 0 && (
+                                    <tr>
+                                        <td colSpan="5" className="px-6 py-12 text-center text-gray-400 font-medium">
+                                            No recent transactions found
+                                        </td>
+                                    </tr>
+                                )}
                             </tbody>
                         </table>
                     </div>

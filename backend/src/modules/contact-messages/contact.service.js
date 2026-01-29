@@ -1,6 +1,6 @@
-import prisma from '../../config/db.js';
+const prisma = require('../../config/db');
 
-export const createMessage = async (data) => {
+exports.createMessage = async (data) => {
     return prisma.contactMessage.create({
         data: {
             name: data.name,
@@ -11,7 +11,7 @@ export const createMessage = async (data) => {
     });
 };
 
-export const getAllMessages = async () => {
+exports.getAllMessages = async () => {
     return prisma.contactMessage.findMany({
         orderBy: {
             createdAt: 'desc'
@@ -19,7 +19,7 @@ export const getAllMessages = async () => {
     });
 };
 
-export const deleteMessageById = async (id) => {
+exports.deleteMessageById = async (id) => {
     return prisma.contactMessage.delete({
         where: { id }
     });

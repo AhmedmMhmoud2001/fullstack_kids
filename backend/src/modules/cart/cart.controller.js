@@ -4,7 +4,9 @@ const prisma = require('../../config/db'); // For product check
 exports.addToCart = async (req, res) => {
     try {
         const userId = req.user.id;
-        const { productId, quantity, selectedSize, selectedColor } = req.body;
+        const { selectedSize, selectedColor } = req.body;
+        const productId = parseInt(req.body.productId);
+        const quantity = parseInt(req.body.quantity);
 
         if (!productId) {
             return res.status(400).json({ message: 'Product ID is required' });
@@ -30,7 +32,7 @@ exports.updateItem = async (req, res) => {
     try {
         const userId = req.user.id;
         const { itemId } = req.params;
-        const { quantity } = req.body;
+        const quantity = parseInt(req.body.quantity);
 
         if (!quantity || quantity < 1) {
             return res.status(400).json({ message: 'Quantity must be >= 1' });

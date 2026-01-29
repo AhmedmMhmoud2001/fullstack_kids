@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { fetchProduct, createProduct, updateProduct } from '../api/products';
 import { fetchCategories } from '../api/categories';
+import brandsApi from '../api/brands';
 import { uploadImage } from '../api/upload';
 import { ArrowLeft, Save, Loader, Upload, X, Plus } from 'lucide-react';
 
@@ -28,6 +29,7 @@ const ProductForm = ({ audience }) => {
     });
 
     const [categories, setCategories] = useState([]);
+    const [brands, setBrands] = useState([]);
     const [loading, setLoading] = useState(false);
     const [uploading, setUploading] = useState(false);
     const [initialLoading, setInitialLoading] = useState(isEditMode);
@@ -36,10 +38,15 @@ const ProductForm = ({ audience }) => {
     const [sizeInput, setSizeInput] = useState('');
 
     useEffect(() => {
-        loadCategories();
-        if (isEditMode) {
-            loadProduct();
-        }
+        const loadInitialData = async () => {
+            await Promise.all([loadCategories(), loadBrands()]);
+            if (isEditMode) {
+                await loadProduct();
+            } else {
+                setInitialLoading(false); // Make sure to stop loading if not edit mode
+            }
+        };
+        loadInitialData();
     }, [id]);
 
     const loadCategories = async () => {
@@ -53,12 +60,36 @@ const ProductForm = ({ audience }) => {
         }
     };
 
+    const loadBrands = async () => {
+        try {
+            const response = await brandsApi.getAll();
+            const brandsData = Array.isArray(response) ? response : (response.data || []);
+            setBrands(brandsData);
+        } catch (err) {
+            console.error('Failed to load brands:', err);
+        }
+    };
+
     const loadProduct = async () => {
         try {
             setInitialLoading(true);
             const response = await fetchProduct(id);
             if (response.success) {
                 const product = response.data;
+
+                const parseJsonField = (field) => {
+                    if (!field) return [];
+                    if (Array.isArray(field)) return field;
+                    if (typeof field === 'string') {
+                        try {
+                            return JSON.parse(field);
+                        } catch (e) {
+                            return [];
+                        }
+                    }
+                    return [];
+                };
+
                 setFormData({
                     name: product.name,
                     description: product.description || '',
@@ -66,9 +97,9 @@ const ProductForm = ({ audience }) => {
                     sku: product.sku,
                     brand: product.brand || '',
                     audience: product.audience,
-                    thumbnails: product.thumbnails ? JSON.parse(product.thumbnails) : [],
-                    colors: product.colors ? JSON.parse(product.colors) : [],
-                    sizes: product.sizes ? JSON.parse(product.sizes) : [],
+                    thumbnails: parseJsonField(product.thumbnails),
+                    colors: parseJsonField(product.colors),
+                    sizes: parseJsonField(product.sizes),
                     additionalInfo: product.additionalInfo || '',
                     isActive: product.isActive,
                     isBestSeller: product.isBestSeller ?? false,
@@ -164,9 +195,10 @@ const ProductForm = ({ audience }) => {
                 price: parseFloat(formData.price),
                 stock: formData.stock === '' ? 0 : parseInt(formData.stock, 10),
                 categoryId: parseInt(formData.categoryId),
-                thumbnails: JSON.stringify(formData.thumbnails),
-                colors: JSON.stringify(formData.colors),
-                sizes: JSON.stringify(formData.sizes)
+                // Send arrays directly, let standard JSON body handle it
+                thumbnails: formData.thumbnails,
+                colors: formData.colors,
+                sizes: formData.sizes
             };
 
             if (isEditMode) {
@@ -281,14 +313,19 @@ const ProductForm = ({ audience }) => {
                             <label className="block text-sm font-medium text-gray-700 mb-1">
                                 Brand
                             </label>
-                            <input
-                                type="text"
+                            <select
                                 name="brand"
                                 value={formData.brand}
                                 onChange={handleChange}
                                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
-                                placeholder="e.g. Nike"
-                            />
+                            >
+                                <option value="">Select a brand</option>
+                                {brands.map(brand => (
+                                    <option key={brand.id} value={brand.name}>
+                                        {brand.name}
+                                    </option>
+                                ))}
+                            </select>
                         </div>
 
                         <div>
@@ -466,7 +503,7 @@ const ProductForm = ({ audience }) => {
                             Product is Active
                         </label>
                     </div>
-                    
+
                     <div className="flex items-center gap-2">
                         <input
                             type="checkbox"

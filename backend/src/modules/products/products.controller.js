@@ -8,6 +8,15 @@ const getScopeFilter = (user) => {
     return {};
 };
 
+exports.getColors = async (req, res) => {
+    try {
+        const colors = await productService.getUniqueColors();
+        res.json({ success: true, data: colors });
+    } catch (error) {
+        res.status(500).json({ success: false, message: error.message });
+    }
+};
+
 exports.create = async (req, res) => {
     try {
         const { audience } = req.body;

@@ -15,6 +15,7 @@ exports.findAll = async (filter = {}) => {
         colors,
         sortBy,
         search,
+        audience, // Extract audience
         ...otherFilters
     } = filter;
 
@@ -23,11 +24,19 @@ exports.findAll = async (filter = {}) => {
         ...otherFilters
     };
 
-    // Search query
+    if (audience) {
+        where.audience = audience;
+    }
+
+    // Search query - with case-insensitivity (handled by DB default collation)
     if (search) {
-        where.OR = [
-            { name: { contains: search } },
-            { description: { contains: search } }
+        where.AND = [
+            {
+                OR: [
+                    { name: { contains: search } },
+                    { description: { contains: search } }
+                ]
+            }
         ];
     }
 
@@ -96,9 +105,56 @@ exports.update = async (id, data) => {
     });
 };
 
+// Get Unique Colors
+exports.getUniqueColors = async () => {
+    const products = await prisma.product.findMany({
+        select: {
+            colors: true
+        }
+    });
+
+    const colors = new Set();
+    products.forEach(p => {
+        let productColors = p.colors;
+
+        // Handle stringified JSON (common issue if stored incorrectly)
+        if (typeof productColors === 'string') {
+            try {
+                productColors = JSON.parse(productColors);
+            } catch (e) {
+                // If not valid JSON, maybe it's just a comma separated string or single value?
+                // For now, ignore or treat as single value if needed.
+                // But mostly it is likely '["Red"]'
+            }
+        }
+
+        if (Array.isArray(productColors)) {
+            productColors.forEach(c => {
+                if (c && typeof c === 'string') {
+                    colors.add(c.trim());
+                }
+            });
+        }
+    });
+
+    return Array.from(colors).sort();
+};
+
 // Delete
 exports.delete = async (id) => {
-    return prisma.product.delete({
-        where: { id: parseInt(id) }
+    const productId = parseInt(id);
+    return prisma.$transaction(async (tx) => {
+        // 1. Delete Cart Items (Temporary data)
+        await tx.cartItem.deleteMany({ where: { productId } });
+
+        // 2. Delete Favorites (Temporary data)
+        await tx.favorite.deleteMany({ where: { productId } });
+
+        // 3. Finally Delete the Product
+        // Note: OrderItem.productId will be set to NULL automatically by Prisma (onDelete: SetNull)
+        // and the productName we saved during purchase will remain.
+        return tx.product.delete({
+            where: { id: productId }
+        });
     });
 };
