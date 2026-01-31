@@ -46,12 +46,12 @@ export const fetchOrderById = async (id, audience = null) => {
     }
 };
 
-export const updateOrderStatus = async (id, status) => {
+export const updateOrderStatus = async (id, status, cancelReason = null) => {
     try {
         const response = await fetch(`${API_BASE_URL}/orders/${id}/status`, {
             method: 'PATCH',
             headers: getHeaders(),
-            body: JSON.stringify({ status }),
+            body: JSON.stringify({ status, cancelReason }),
         });
 
         const data = await response.json();

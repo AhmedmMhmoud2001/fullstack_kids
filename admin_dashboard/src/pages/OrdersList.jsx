@@ -31,10 +31,16 @@ const OrdersList = ({ audience, title }) => {
 
     const handleUpdateOrderStatus = async (orderId, newStatus) => {
         try {
-            const response = await updateOrderStatus(orderId, newStatus);
+            let cancelReason = null;
+            if (newStatus === 'CANCELLED') {
+                cancelReason = prompt('Please enter the reason for cancellation (this will be sent to the user):');
+                if (cancelReason === null) return; // User cancelled the prompt
+            }
+
+            const response = await updateOrderStatus(orderId, newStatus, cancelReason);
             if (response.success) {
                 if (selectedOrder && selectedOrder.id === orderId) {
-                    setSelectedOrder({ ...selectedOrder, status: newStatus });
+                    setSelectedOrder({ ...selectedOrder, status: newStatus, cancelReason: cancelReason });
                 }
                 loadOrders();
             }
@@ -109,6 +115,7 @@ const OrdersList = ({ audience, title }) => {
                                 <th className="px-6 py-4 text-sm font-semibold text-gray-600">Order ID</th>
                                 <th className="px-6 py-4 text-sm font-semibold text-gray-600">Customer</th>
                                 <th className="px-6 py-4 text-sm font-semibold text-gray-600">Date</th>
+                                <th className="px-6 py-4 text-sm font-semibold text-gray-600">Discount</th>
                                 <th className="px-6 py-4 text-sm font-semibold text-gray-600">Total</th>
                                 <th className="px-6 py-4 text-sm font-semibold text-gray-600">Status</th>
                                 <th className="px-6 py-4 text-sm font-semibold text-gray-600 text-right">Actions</th>
@@ -126,6 +133,9 @@ const OrdersList = ({ audience, title }) => {
                                     </td>
                                     <td className="px-6 py-4 text-sm text-gray-600">
                                         {new Date(order.createdAt).toLocaleDateString()}
+                                    </td>
+                                    <td className="px-6 py-4 text-sm font-medium text-red-600">
+                                        {parseFloat(order.discount || 0) > 0 ? `-${parseFloat(order.discount).toFixed(2)} EGP` : '-'}
                                     </td>
                                     <td className="px-6 py-4 text-sm font-bold text-blue-600">
                                         {parseFloat(order.totalAmount).toFixed(2)} EGP
@@ -197,6 +207,12 @@ const OrdersList = ({ audience, title }) => {
                                             <div>
                                                 <p className="text-[10px] text-gray-500 uppercase">Notes</p>
                                                 <p className="text-sm text-gray-600">{selectedOrder.notes}</p>
+                                            </div>
+                                        )}
+                                        {selectedOrder.status === 'CANCELLED' && selectedOrder.cancelReason && (
+                                            <div className="bg-red-50 p-2 rounded border border-red-100">
+                                                <p className="text-[10px] text-red-500 uppercase font-bold">Cancellation Reason</p>
+                                                <p className="text-sm text-red-700">{selectedOrder.cancelReason}</p>
                                             </div>
                                         )}
                                     </div>

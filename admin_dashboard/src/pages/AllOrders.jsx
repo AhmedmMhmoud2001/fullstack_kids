@@ -33,10 +33,16 @@ const AllOrders = () => {
 
     const handleUpdateOrderStatus = async (orderId, newStatus) => {
         try {
-            const response = await updateOrderStatus(orderId, newStatus);
+            let cancelReason = null;
+            if (newStatus === 'CANCELLED') {
+                cancelReason = prompt('Please enter the reason for cancellation (this will be sent to the user):');
+                if (cancelReason === null) return; // User cancelled the prompt
+            }
+
+            const response = await updateOrderStatus(orderId, newStatus, cancelReason);
             if (response.success) {
                 if (selectedOrder && selectedOrder.id === orderId) {
-                    setSelectedOrder({ ...selectedOrder, status: newStatus });
+                    setSelectedOrder({ ...selectedOrder, status: newStatus, cancelReason: cancelReason });
                 }
                 loadOrders();
             }
@@ -123,6 +129,7 @@ const AllOrders = () => {
                                 <th className="px-6 py-4 text-sm font-semibold text-gray-600">Order ID</th>
                                 <th className="px-6 py-4 text-sm font-semibold text-gray-600">Customer</th>
                                 <th className="px-6 py-4 text-sm font-semibold text-gray-600">Date</th>
+                                <th className="px-6 py-4 text-sm font-semibold text-gray-600">Discount</th>
                                 <th className="px-6 py-4 text-sm font-semibold text-gray-600">Total Price</th>
                                 <th className="px-6 py-4 text-sm font-semibold text-gray-600">Status</th>
                                 <th className="px-6 py-4 text-sm font-semibold text-gray-600 text-right">Actions</th>
@@ -142,6 +149,9 @@ const AllOrders = () => {
                                     </td>
                                     <td className="px-6 py-4 text-sm text-gray-600">
                                         {new Date(order.createdAt).toLocaleDateString()}
+                                    </td>
+                                    <td className="px-6 py-4 text-sm font-medium text-red-600">
+                                        {parseFloat(order.discount || 0) > 0 ? `-${parseFloat(order.discount).toFixed(2)} EGP` : '-'}
                                     </td>
                                     <td className="px-6 py-4 text-sm font-bold text-blue-600">
                                         {parseFloat(order.totalAmount).toFixed(2)} EGP
@@ -203,6 +213,12 @@ const AllOrders = () => {
                                             <p className="text-sm text-gray-700">Phone: {selectedOrder.billingInfo?.phone || 'N/A'}</p>
                                             <p className="text-sm text-gray-700">Address: {formatAddress(selectedOrder.shippingAddress)}</p>
                                         </div>
+                                        {selectedOrder.status === 'CANCELLED' && selectedOrder.cancelReason && (
+                                            <div className="bg-red-50 p-3 rounded-lg border border-red-100">
+                                                <p className="text-[10px] text-red-500 uppercase font-bold">Cancellation Reason (Sent to User)</p>
+                                                <p className="text-sm text-red-700 leading-relaxed font-medium">{selectedOrder.cancelReason}</p>
+                                            </div>
+                                        )}
                                     </div>
                                 </div>
                                 <div className="bg-white p-6 rounded-xl border border-gray-100 shadow-sm">
@@ -220,6 +236,10 @@ const AllOrders = () => {
                                             <div>
                                                 <p className="text-[10px] text-gray-500 uppercase font-bold">Shipping</p>
                                                 <p className="text-sm font-medium">{parseFloat(selectedOrder.shippingFee).toFixed(2)} EGP</p>
+                                            </div>
+                                            <div>
+                                                <p className="text-[10px] text-red-500 uppercase font-bold">Discount</p>
+                                                <p className="text-sm font-medium text-red-600">-{parseFloat(selectedOrder.discount).toFixed(2)} EGP</p>
                                             </div>
                                         </div>
                                     </div>

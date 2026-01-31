@@ -41,4 +41,15 @@ exports.findByCode = async (code) => {
     });
 };
 
+exports.incrementUsage = async (code) => {
+    return prisma.coupon.update({
+        where: { code: String(code).toUpperCase() },
+        data: {
+            usageCount: {
+                increment: 1
+            }
+        }
+    });
+};
+
 

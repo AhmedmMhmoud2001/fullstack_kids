@@ -32,10 +32,10 @@ async function main() {
 
     // 2. Brands
     const brandsData = [
-        { name: 'Nike', slug: 'nike', image: 'https://via.placeholder.com/150?text=Nike' },
-        { name: 'Adidas', slug: 'adidas', image: 'https://via.placeholder.com/150?text=Adidas' },
-        { name: 'Puma', slug: 'puma', image: 'https://via.placeholder.com/150?text=Puma' },
-        { name: 'Zara', slug: 'zara', image: 'https://via.placeholder.com/150?text=Zara' },
+        { name: 'Nike', slug: 'nike', image: 'https://placehold.co/150?text=Nike' },
+        { name: 'Adidas', slug: 'adidas', image: 'https://placehold.co/150?text=Adidas' },
+        { name: 'Puma', slug: 'puma', image: 'https://placehold.co/150?text=Puma' },
+        { name: 'Zara', slug: 'zara', image: 'https://placehold.co/150?text=Zara' },
     ];
 
     const brands = [];
@@ -51,11 +51,11 @@ async function main() {
 
     // 3. Categories
     const categoriesData = [
-        { name: 'Clothing', slug: 'clothing', audience: 'KIDS', image: 'https://via.placeholder.com/300?text=Kids+Clothing' },
-        { name: 'Toys', slug: 'toys', audience: 'KIDS', image: 'https://via.placeholder.com/300?text=Kids+Toys' },
-        { name: 'Accessories', slug: 'accessories', audience: 'KIDS', image: 'https://via.placeholder.com/300?text=Kids+Acc' },
-        { name: 'Clothing', slug: 'clothing', audience: 'NEXT', image: 'https://via.placeholder.com/300?text=Next+Clothing' },
-        { name: 'Shoes', slug: 'shoes', audience: 'NEXT', image: 'https://via.placeholder.com/300?text=Next+Shoes' },
+        { name: 'Clothing', slug: 'clothing', audience: 'KIDS', image: 'https://placehold.co/300?text=Kids+Clothing' },
+        { name: 'Toys', slug: 'toys', audience: 'KIDS', image: 'https://placehold.co/300?text=Kids+Toys' },
+        { name: 'Accessories', slug: 'accessories', audience: 'KIDS', image: 'https://placehold.co/300?text=Kids+Acc' },
+        { name: 'Clothing', slug: 'clothing', audience: 'NEXT', image: 'https://placehold.co/300?text=Next+Clothing' },
+        { name: 'Shoes', slug: 'shoes', audience: 'NEXT', image: 'https://placehold.co/300?text=Next+Shoes' },
     ];
 
     const categories = [];
@@ -83,7 +83,7 @@ async function main() {
             brand: 'Nike',
             audience: 'KIDS',
             stock: 100,
-            thumbnails: JSON.stringify(['https://via.placeholder.com/600x600/FFB6C1/FFFFFF?text=Kids+T-Shirt']),
+            thumbnails: JSON.stringify(['https://placehold.co/600x600/FFB6C1/FFFFFF?text=Kids+T-Shirt']),
             colors: JSON.stringify(['Blue', 'Red', 'White']),
             sizes: JSON.stringify(['S', 'M', 'L']),
             categoryId: kidsClothingCat.id,
@@ -98,7 +98,7 @@ async function main() {
             brand: 'Puma',
             audience: 'KIDS',
             stock: 50,
-            thumbnails: JSON.stringify(['https://via.placeholder.com/600x600/ADD8E6/FFFFFF?text=RC+Car']),
+            thumbnails: JSON.stringify(['https://placehold.co/600x600/ADD8E6/FFFFFF?text=RC+Car']),
             colors: JSON.stringify(['Red', 'Black']),
             categoryId: kidsToysCat.id,
             brandId: brands.find(b => b.name === 'Puma').id
@@ -111,7 +111,7 @@ async function main() {
             brand: 'Zara',
             audience: 'NEXT',
             stock: 30,
-            thumbnails: JSON.stringify(['https://via.placeholder.com/600x600/333333/FFFFFF?text=Next+Hoodie']),
+            thumbnails: JSON.stringify(['https://placehold.co/600x600/333333/FFFFFF?text=Next+Hoodie']),
             colors: JSON.stringify(['Grey', 'Dark Blue']),
             sizes: JSON.stringify(['M', 'L', 'XL']),
             categoryId: nextClothingCat.id,

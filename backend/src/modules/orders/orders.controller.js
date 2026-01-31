@@ -11,7 +11,8 @@ exports.createOrder = async (req, res) => {
             billingInfo,
             shippingAddress,
             shippingFee,
-            discount
+            discount,
+            couponCode
         } = req.body;
 
         if (!items || items.length === 0) {
@@ -24,7 +25,8 @@ exports.createOrder = async (req, res) => {
             billingInfo,
             shippingAddress,
             shippingFee,
-            discount
+            discount,
+            couponCode
         });
 
         res.status(201).json({ success: true, data: order });
@@ -97,9 +99,9 @@ exports.getOrderById = async (req, res) => {
 exports.updateOrderStatus = async (req, res) => {
     try {
         const id = req.params.id;
-        const { status } = req.body;
+        const { status, cancelReason } = req.body;
 
-        const order = await orderService.updateStatus(id, status);
+        const order = await orderService.updateStatus(id, status, cancelReason);
         res.json({ success: true, data: order });
     } catch (error) {
         res.status(400).json({ success: false, message: error.message });

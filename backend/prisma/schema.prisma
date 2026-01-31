@@ -139,6 +139,7 @@ model Order {
   payments        Payment[]
   createdAt       DateTime      @default(now())
   updatedAt       DateTime      @updatedAt
+  cancelReason    String?       @db.Text
 
   @@map("orders")
 }

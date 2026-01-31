@@ -40,28 +40,38 @@ exports.create = async (userId, itemsData, additionalData = {}) => {
     const discount = additionalData.discount || 0;
     const totalAmount = subtotal + Number(shippingFee) - Number(discount);
 
-    // 2. Create Order and Items
-    return prisma.order.create({
-        data: {
-            userId,
-            status: 'PENDING',
-            subtotal,
-            shippingFee,
-            discount,
-            totalAmount,
-            paymentMethod: additionalData.paymentMethod || 'COD',
-            notes: additionalData.notes || null,
-            billingInfo: additionalData.billingInfo || null,
-            shippingAddress: additionalData.shippingAddress || null,
-            items: {
-                create: orderItemsData
-            }
-        },
-        include: {
-            items: {
-                include: { product: true }
-            }
+    // 2. Create Order and increment Coupon Usage in a Transaction
+    return prisma.$transaction(async (tx) => {
+        // If a coupon code was used, increment its usage
+        if (additionalData.couponCode) {
+            await tx.coupon.update({
+                where: { code: additionalData.couponCode.toUpperCase() },
+                data: { usageCount: { increment: 1 } }
+            });
         }
+
+        return tx.order.create({
+            data: {
+                userId,
+                status: 'PENDING',
+                subtotal,
+                shippingFee,
+                discount,
+                totalAmount,
+                paymentMethod: additionalData.paymentMethod || 'COD',
+                notes: additionalData.notes || null,
+                billingInfo: additionalData.billingInfo || null,
+                shippingAddress: additionalData.shippingAddress || null,
+                items: {
+                    create: orderItemsData
+                }
+            },
+            include: {
+                items: {
+                    include: { product: true }
+                }
+            }
+        });
     });
 };
 
@@ -101,9 +111,12 @@ exports.findOne = async (id, itemWhere = {}) => {
     });
 };
 
-exports.updateStatus = async (id, status) => {
+exports.updateStatus = async (id, status, cancelReason = null) => {
     return prisma.order.update({
         where: { id: parseInt(id) },
-        data: { status }
+        data: {
+            status,
+            cancelReason: status === 'CANCELLED' ? cancelReason : null
+        }
     });
 };
