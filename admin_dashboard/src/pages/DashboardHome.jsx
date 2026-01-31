@@ -127,7 +127,7 @@ const DashboardHome = () => {
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
                         <StatCard
                             title="Total Revenue"
-                            value={`${stats.totalRevenue.toFixed(2)} EE`}
+                            value={`${stats.totalRevenue.toFixed(2)} EGP`}
                             icon={<DollarSign size={24} />}
                             change="8.5%+"
                             iconBg="bg-emerald-500"
@@ -258,7 +258,7 @@ const DashboardHome = () => {
                                     </defs>
                                     <CartesianGrid vertical={false} strokeDasharray="3 3" stroke="#f1f5f9" />
                                     <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fill: '#94a3b8', fontSize: 11 }} dy={10} />
-                                    <YAxis axisLine={false} tickLine={false} tick={{ fill: '#94a3b8', fontSize: 11 }} tickFormatter={(v) => `$${v / 1000}k`} />
+                                    <YAxis axisLine={false} tickLine={false} tick={{ fill: '#94a3b8', fontSize: 11 }} tickFormatter={(v) => `${v / 1000}k EGP`} />
                                     <Tooltip
                                         contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1)' }}
                                     />
@@ -337,7 +337,7 @@ const DashboardHome = () => {
                                             </div>
                                         </td>
                                         <td className="px-6 py-4 font-black text-blue-600">
-                                            {parseFloat(order.totalAmount).toFixed(2)} EE
+                                            {parseFloat(order.totalAmount).toFixed(2)} EGP
                                         </td>
                                         <td className="px-6 py-4">
                                             <span className={`px-2 py-1 text-[9px] font-black rounded-lg uppercase tracking-wider ${order.status === 'PAID' ? 'bg-emerald-100 text-emerald-700' : 'bg-amber-100 text-amber-700'

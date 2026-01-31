@@ -122,7 +122,7 @@ const Settings = () => {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm">
                     <p className="text-xs font-bold text-gray-400 uppercase mb-2">Current Rate</p>
-                    <p className="text-2xl font-black text-blue-600 font-primary">{shippingFee || '0.00'} EE</p>
+                    <p className="text-2xl font-black text-blue-600 font-primary">{shippingFee || '0.00'} EGP</p>
                 </div>
                 <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm">
                     <p className="text-xs font-bold text-gray-400 uppercase mb-2">Scope</p>

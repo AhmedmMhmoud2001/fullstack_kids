@@ -137,7 +137,7 @@ const ProductsList = ({ audience, title }) => {
                             <p className="text-xs text-gray-500 mb-2">
                                 Stock: <span className="font-semibold text-gray-800">{product.stock ?? 0}</span>
                             </p>
-                            <p className="text-lg font-bold text-blue-600 mb-2">${parseFloat(product.price).toFixed(2)}</p>
+                            <p className="text-lg font-bold text-blue-600 mb-2">{parseFloat(product.price).toFixed(2)} EGP</p>
 
                             {/* Likes Count */}
                             <div className="flex items-center gap-1 mb-3">
@@ -206,7 +206,7 @@ const ProductsList = ({ audience, title }) => {
                 <div className="bg-white rounded-lg shadow-sm p-6">
                     <div className="text-sm text-gray-600">Total Value</div>
                     <div className="text-2xl font-bold text-blue-600 mt-1">
-                        ${products.reduce((sum, p) => sum + parseFloat(p.price), 0).toFixed(2)}
+                        {products.reduce((sum, p) => sum + parseFloat(p.price), 0).toFixed(2)} EGP
                     </div>
                 </div>
             </div>
@@ -253,7 +253,7 @@ const ProductsList = ({ audience, title }) => {
                                 </div>
                                 <div>
                                     <p className="text-sm text-gray-600">Price</p>
-                                    <p className="font-semibold text-blue-600">${parseFloat(selectedProduct.price).toFixed(2)}</p>
+                                    <p className="font-semibold text-blue-600">{parseFloat(selectedProduct.price).toFixed(2)} EGP</p>
                                 </div>
                                 <div>
                                     <p className="text-sm text-gray-600">Likes</p>

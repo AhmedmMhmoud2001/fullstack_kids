@@ -144,7 +144,7 @@ const AllOrders = () => {
                                         {new Date(order.createdAt).toLocaleDateString()}
                                     </td>
                                     <td className="px-6 py-4 text-sm font-bold text-blue-600">
-                                        {parseFloat(order.totalAmount).toFixed(2)} EE
+                                        {parseFloat(order.totalAmount).toFixed(2)} EGP
                                     </td>
                                     <td className="px-6 py-4">
                                         <select
@@ -210,16 +210,16 @@ const AllOrders = () => {
                                     <div className="space-y-4">
                                         <div className="flex justify-between items-center bg-blue-50 p-3 rounded-lg">
                                             <span className="text-sm font-semibold text-blue-700">Total Profitability</span>
-                                            <span className="text-lg font-black text-blue-600">{parseFloat(selectedOrder.totalAmount).toFixed(2)} EE</span>
+                                            <span className="text-lg font-black text-blue-600">{parseFloat(selectedOrder.totalAmount).toFixed(2)} EGP</span>
                                         </div>
                                         <div className="grid grid-cols-2 gap-4">
                                             <div>
                                                 <p className="text-[10px] text-gray-500 uppercase font-bold">Subtotal</p>
-                                                <p className="text-sm font-medium">{parseFloat(selectedOrder.subtotal).toFixed(2)} EE</p>
+                                                <p className="text-sm font-medium">{parseFloat(selectedOrder.subtotal).toFixed(2)} EGP</p>
                                             </div>
                                             <div>
                                                 <p className="text-[10px] text-gray-500 uppercase font-bold">Shipping</p>
-                                                <p className="text-sm font-medium">{parseFloat(selectedOrder.shippingFee).toFixed(2)} EE</p>
+                                                <p className="text-sm font-medium">{parseFloat(selectedOrder.shippingFee).toFixed(2)} EGP</p>
                                             </div>
                                         </div>
                                     </div>
@@ -242,10 +242,10 @@ const AllOrders = () => {
                                             </div>
                                             <div className="flex-1">
                                                 <p className="text-sm font-bold text-gray-900">{item.productName || item.product?.name}</p>
-                                                <p className="text-xs text-gray-500">Qty: {item.quantity} × {parseFloat(item.priceAtPurchase).toFixed(2)} EE</p>
+                                                <p className="text-xs text-gray-500">Qty: {item.quantity} × {parseFloat(item.priceAtPurchase).toFixed(2)} EGP</p>
                                             </div>
                                             <div className="text-right">
-                                                <p className="text-sm font-black text-gray-900">{(item.quantity * item.priceAtPurchase).toFixed(2)} EE</p>
+                                                <p className="text-sm font-black text-gray-900">{(item.quantity * item.priceAtPurchase).toFixed(2)} EGP</p>
                                             </div>
                                         </div>
                                     ))}

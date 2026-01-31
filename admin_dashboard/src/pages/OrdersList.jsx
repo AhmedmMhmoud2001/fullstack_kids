@@ -128,7 +128,7 @@ const OrdersList = ({ audience, title }) => {
                                         {new Date(order.createdAt).toLocaleDateString()}
                                     </td>
                                     <td className="px-6 py-4 text-sm font-bold text-blue-600">
-                                        {parseFloat(order.totalAmount).toFixed(2)} EE
+                                        {parseFloat(order.totalAmount).toFixed(2)} EGP
                                     </td>
                                     <td className="px-6 py-4">
                                         <span className={`px-2 py-1 text-xs font-semibold rounded-full ${getStatusColor(order.status)}`}>
@@ -249,12 +249,12 @@ const OrdersList = ({ audience, title }) => {
                                             <div className="flex-1 text-center sm:text-left">
                                                 <h4 className="font-bold text-gray-900 text-sm md:text-base">{item.product?.name || item.productName || 'Deleted Product'}</h4>
                                                 <p className="text-xs text-gray-500 italic">
-                                                    Qty: {item.quantity} × {parseFloat(item.priceAtPurchase).toFixed(2)} EE
+                                                    Qty: {item.quantity} × {parseFloat(item.priceAtPurchase).toFixed(2)} EGP
                                                 </p>
                                             </div>
                                             <div className="text-right min-w-[80px]">
                                                 <p className="text-base md:text-lg font-bold text-gray-900">
-                                                    {(item.quantity * parseFloat(item.priceAtPurchase)).toFixed(2)} EE
+                                                    {(item.quantity * parseFloat(item.priceAtPurchase)).toFixed(2)} EGP
                                                 </p>
                                             </div>
                                         </div>
@@ -263,19 +263,19 @@ const OrdersList = ({ audience, title }) => {
                                 <div className="p-4 md:p-6 bg-gray-50 border-t border-gray-100 space-y-2">
                                     <div className="flex justify-between items-center text-sm text-gray-600">
                                         <span>Subtotal</span>
-                                        <span>{parseFloat(selectedOrder.subtotal).toFixed(2)} EE</span>
+                                        <span>{parseFloat(selectedOrder.subtotal).toFixed(2)} EGP</span>
                                     </div>
                                     <div className="flex justify-between items-center text-sm text-gray-600">
                                         <span>Shipping Fee</span>
-                                        <span>+{parseFloat(selectedOrder.shippingFee).toFixed(2)} EE</span>
+                                        <span>+{parseFloat(selectedOrder.shippingFee).toFixed(2)} EGP</span>
                                     </div>
                                     <div className="flex justify-between items-center text-sm text-red-600">
                                         <span>Discount</span>
-                                        <span>-{parseFloat(selectedOrder.discount).toFixed(2)} EE</span>
+                                        <span>-{parseFloat(selectedOrder.discount).toFixed(2)} EGP</span>
                                     </div>
                                     <div className="flex justify-between items-center pt-2 border-t border-gray-200">
                                         <span className="text-gray-900 font-bold">Total Amount</span>
-                                        <span className="text-xl md:text-2xl font-black text-blue-600">{parseFloat(selectedOrder.totalAmount).toFixed(2)} EE</span>
+                                        <span className="text-xl md:text-2xl font-black text-blue-600">{parseFloat(selectedOrder.totalAmount).toFixed(2)} EGP</span>
                                     </div>
                                 </div>
                             </div>
