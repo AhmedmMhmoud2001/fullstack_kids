@@ -15,7 +15,8 @@ import {
     X,
     Percent,
     ListChecks,
-    Settings
+    Settings,
+    Video
 } from 'lucide-react';
 
 const Sidebar = ({ isOpen, onClose }) => {
@@ -106,6 +107,12 @@ const Sidebar = ({ isOpen, onClose }) => {
             path: '/profile',
             icon: <UserCircle size={20} />,
             roles: ['SYSTEM_ADMIN', 'ADMIN_KIDS', 'ADMIN_NEXT']
+        },
+        {
+            title: 'Home Settings',
+            path: '/home-settings',
+            icon: <Video size={20} />,
+            roles: ['SYSTEM_ADMIN', 'ADMIN_NEXT']
         },
         {
             title: 'Settings',

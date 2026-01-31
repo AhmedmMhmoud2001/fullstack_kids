@@ -8,7 +8,7 @@ const { authorize } = require('../../middlewares/role.middleware');
 router.get('/', settingsController.getAllSettings);
 router.get('/:key', settingsController.getSettingByKey);
 
-// Only System Admin can update settings
-router.post('/', authenticate, authorize(['SYSTEM_ADMIN']), settingsController.updateSetting);
+// Only System Admin or Next Admin can update settings
+router.post('/', authenticate, authorize(['SYSTEM_ADMIN', 'ADMIN_NEXT']), settingsController.updateSetting);
 
 module.exports = router;

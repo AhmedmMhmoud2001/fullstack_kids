@@ -20,6 +20,7 @@ import StaticPages from './pages/StaticPages';
 import Coupons from './pages/Coupons';
 import AllOrders from './pages/AllOrders';
 import Settings from './pages/Settings';
+import HomeSettings from './pages/HomeSettings';
 
 // Role Constants
 const ROLES = {
@@ -235,6 +236,15 @@ const DashboardRoutes = () => {
                     element={
                         <ProtectedRoute allowedRoles={[ROLES.SYSTEM_ADMIN]}>
                             <Settings />
+                        </ProtectedRoute>
+                    }
+                />
+                {/* Homepage Settings - Next Home Video */}
+                <Route
+                    path="home-settings"
+                    element={
+                        <ProtectedRoute allowedRoles={[ROLES.SYSTEM_ADMIN, ROLES.ADMIN_NEXT]}>
+                            <HomeSettings />
                         </ProtectedRoute>
                     }
                 />
