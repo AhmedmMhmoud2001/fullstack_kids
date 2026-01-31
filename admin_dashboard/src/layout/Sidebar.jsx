@@ -13,7 +13,9 @@ import {
     Tag,
     Bell,
     X,
-    Percent
+    Percent,
+    ListChecks,
+    Settings
 } from 'lucide-react';
 
 const Sidebar = ({ isOpen, onClose }) => {
@@ -31,6 +33,12 @@ const Sidebar = ({ isOpen, onClose }) => {
             title: 'Users',
             path: '/users',
             icon: <Users size={20} />,
+            roles: ['SYSTEM_ADMIN']
+        },
+        {
+            title: 'System Orders',
+            path: '/orders',
+            icon: <ListChecks size={20} />,
             roles: ['SYSTEM_ADMIN']
         },
         {
@@ -98,6 +106,12 @@ const Sidebar = ({ isOpen, onClose }) => {
             path: '/profile',
             icon: <UserCircle size={20} />,
             roles: ['SYSTEM_ADMIN', 'ADMIN_KIDS', 'ADMIN_NEXT']
+        },
+        {
+            title: 'Settings',
+            path: '/settings',
+            icon: <Settings size={20} />,
+            roles: ['SYSTEM_ADMIN']
         }
     ];
 

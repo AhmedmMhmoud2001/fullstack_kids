@@ -18,6 +18,8 @@ import ContactMessages from './pages/Contact';
 import Brands from './pages/Brands';
 import StaticPages from './pages/StaticPages';
 import Coupons from './pages/Coupons';
+import AllOrders from './pages/AllOrders';
+import Settings from './pages/Settings';
 
 // Role Constants
 const ROLES = {
@@ -141,6 +143,16 @@ const DashboardRoutes = () => {
                     }
                 />
 
+                {/* System Orders - SYSTEM_ADMIN only */}
+                <Route
+                    path="orders"
+                    element={
+                        <ProtectedRoute allowedRoles={[ROLES.SYSTEM_ADMIN]}>
+                            <AllOrders />
+                        </ProtectedRoute>
+                    }
+                />
+
                 {/* Categories Section - Admins only */}
                 <Route
                     path="categories"
@@ -216,8 +228,17 @@ const DashboardRoutes = () => {
                         </ProtectedRoute>
                     }
                 />
-            </Route>
 
+                {/* Global Settings - SYSTEM_ADMIN only */}
+                <Route
+                    path="settings"
+                    element={
+                        <ProtectedRoute allowedRoles={[ROLES.SYSTEM_ADMIN]}>
+                            <Settings />
+                        </ProtectedRoute>
+                    }
+                />
+            </Route>
 
             {/* Catch all redirect to home */}
             <Route path="*" element={<Navigate to="/" replace />} />
